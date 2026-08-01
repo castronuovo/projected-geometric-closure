@@ -1,0 +1,94 @@
+{
+  "contract": {
+    "bins_per_slice": 18,
+    "interpretation": "survey-inspired structural benchmark, not forecast",
+    "k_max_h_Mpc": 0.2,
+    "k_min_h_Mpc": 0.02,
+    "nuisance_columns": 5,
+    "nuisance_families": [
+      "independent_slice_amplitude",
+      "common_logk_tilt",
+      "common_logk_curvature"
+    ],
+    "observational_data_ingested": false,
+    "redshifts": [
+      0.5,
+      0.8,
+      1.1
+    ],
+    "single_mode_bank": {
+      "amplitude_profiled": true,
+      "exact_single_target_mass_added": true,
+      "logarithmic_grid_points": 321,
+      "maximum_mass_h_Mpc": 0.8,
+      "minimum_mass_h_Mpc": 0.1
+    },
+    "target_amplitude_law": "beta(a)=0.040*a**1.2",
+    "targets": {
+      "positive_two_mode": {
+        "masses_h_Mpc": [
+          0.1,
+          0.4
+        ],
+        "weights": [
+          0.5,
+          0.5
+        ]
+      },
+      "signed_out_of_class": {
+        "masses_h_Mpc": [
+          0.1,
+          0.4
+        ],
+        "weights": [
+          -0.5,
+          1.5
+        ]
+      },
+      "single_mode": {
+        "masses_h_Mpc": [
+          0.15
+        ],
+        "weights": [
+          1.0
+        ]
+      }
+    },
+    "window_logk_width": 0.105
+  },
+  "results": {
+    "positive_two_mode": {
+      "amplitude": 0.017797519413256364,
+      "hardened_residual_fraction": 0.029650190046201015,
+      "mass": 0.10065194142839583,
+      "nuisance_eta2": 0.010778686299860698,
+      "raw_residual_fraction": 0.0003195900972392533,
+      "residual_chi2": 0.0014495103691810204
+    },
+    "signed_out_of_class": {
+      "amplitude": 0.15497584976408235,
+      "hardened_residual_fraction": 0.17409017520999262,
+      "mass": 0.5818410157491822,
+      "nuisance_eta2": 0.15293614167165073,
+      "raw_residual_fraction": 0.026624679699557924,
+      "residual_chi2": 0.021181792555716276
+    },
+    "single_mode": {
+      "amplitude": 0.03999999999999999,
+      "hardened_residual_fraction": 3.383061342915473e-29,
+      "mass": 0.15,
+      "nuisance_eta2": 0.016556115078870226,
+      "raw_residual_fraction": 5.6010352912185845e-31,
+      "residual_chi2": 3.745235321864633e-30
+    }
+  },
+  "validation": {
+    "covariance_minimum_eigenvalue": 1.1987176549089959e-05,
+    "nuisance_rank": 5,
+    "profiled_information_eigenvalues": [
+      0.00424951828337891,
+      0.15534304351762307
+    ],
+    "window_row_sum_max_error": 4.440892098500626e-16
+  }
+}
