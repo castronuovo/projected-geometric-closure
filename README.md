@@ -90,3 +90,12 @@ shasum -a 256 -c SHA256SUMS
 to verify the frozen source, results, and figures. Rendering hashes can change
 with the Matplotlib or font-stack version; the JSON and CSV files are the
 machine-readable scientific outputs.
+
+## License
+
+- `benchmark_projected_spectral.py` is licensed under the
+  [BSD 3-Clause License](LICENSE).
+- The documentation, CSV and JSON outputs, and figures are licensed under
+  [Creative Commons Attribution 4.0 International](LICENSE-CONTENT).
+
+Copyright (c) 2026 Vitantonio Castronuovo.

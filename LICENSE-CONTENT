@@ -1,0 +1,20 @@
+Creative Commons Attribution 4.0 International (CC BY 4.0)
+
+Copyright (c) 2026, Vitantonio Castronuovo
+
+The documentation, machine-readable benchmark data, and figures in this
+repository are licensed under the Creative Commons Attribution 4.0
+International Public License.
+
+You may share and adapt these materials for any purpose, provided that you
+give appropriate credit, provide a link to the license, and indicate whether
+changes were made. No additional restrictions may be applied.
+
+License summary:
+https://creativecommons.org/licenses/by/4.0/
+
+Full legal code:
+https://creativecommons.org/licenses/by/4.0/legalcode
+
+This license does not apply to benchmark_projected_spectral.py, which is
+licensed separately under the BSD 3-Clause License in LICENSE.
