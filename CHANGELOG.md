@@ -6,6 +6,7 @@
   numerical-tolerance audit while preserving exact structural checks.
 - Added a standalone reproducibility verifier for the frozen CSV and JSON
   scientific outputs.
+- Updated the workflow actions to their Node 24 generations.
 
 This patch does not alter the scientific model, benchmarks, or manuscript
 claims.
