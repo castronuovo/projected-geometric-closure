@@ -114,8 +114,9 @@ with the Matplotlib or font-stack version; the JSON and CSV files are the
 machine-readable scientific outputs.
 
 The frozen package corresponding to the revised manuscript is release
-[`v1.1.0`](https://github.com/castronuovo/projected-geometric-closure/releases/tag/v1.1.0).
-The earlier `v1.0.0` tag remains immutable and is not overwritten.
+[`v1.1.1`](https://github.com/castronuovo/projected-geometric-closure/releases/tag/v1.1.1).
+The earlier `v1.0.0` and `v1.1.0` tags remain immutable and are not
+overwritten.
 
 ## License
 

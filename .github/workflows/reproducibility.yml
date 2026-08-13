@@ -17,11 +17,15 @@ jobs:
         run: python -m pip install -r requirements.txt
       - name: Verify committed release files
         run: sha256sum -c SHA256SUMS
-      - name: Recompute analytic and projected benchmarks
-        run: python benchmark_projected_spectral.py
-      - name: Verify deterministic scientific outputs
+      - name: Preserve frozen scientific outputs
         run: |
-          git diff --exit-code -- \
+          mkdir -p "$RUNNER_TEMP/frozen-outputs"
+          cp \
             benchmark_identifiability.csv \
             survey_projected_benchmark.csv \
-            survey_projected_benchmark.json
+            survey_projected_benchmark.json \
+            "$RUNNER_TEMP/frozen-outputs/"
+      - name: Recompute analytic and projected benchmarks
+        run: python benchmark_projected_spectral.py
+      - name: Verify numerically reproducible scientific outputs
+        run: python verify_reproducibility.py "$RUNNER_TEMP/frozen-outputs"

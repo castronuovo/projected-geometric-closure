@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.1.1 — 2026-08-13
+
+- Replaced byte-exact cross-platform output comparison with an explicit
+  numerical-tolerance audit while preserving exact structural checks.
+- Added a standalone reproducibility verifier for the frozen CSV and JSON
+  scientific outputs.
+
+This patch does not alter the scientific model, benchmarks, or manuscript
+claims.
+
 ## 1.1.0 — 2026-08-13
 
 - Added machine-readable checks of the normalized Jensen envelopes.
