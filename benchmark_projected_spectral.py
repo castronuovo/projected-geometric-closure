@@ -1,11 +1,11 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # Copyright (c) 2026 Vitantonio Castronuovo
 
-"""Reproducible analytic and survey-inspired benchmarks for Paper III.
+"""Reproducible analytic and survey-inspired benchmarks for Projected Geometric Closure.
 
 This is not a survey likelihood or forecast.  It tests finite-scale spectral
-diagnostics and covariance-profiled identifiability under a fixed,
-survey-inspired linear analysis contract.
+diagnostics, normalized spectral bounds, and covariance-profiled
+identifiability under a fixed, survey-inspired linear analysis contract.
 """
 
 import json
@@ -27,6 +27,7 @@ FIG_SURVEY = ROOT / "figs" / "fig3_survey_projected_spectral_benchmark.png"
 CSV = ROOT / "benchmark_identifiability.csv"
 SURVEY_CSV = ROOT / "survey_projected_benchmark.csv"
 SURVEY_JSON = ROOT / "survey_projected_benchmark.json"
+VALIDATION_TOLERANCE = 5.0e-12
 
 
 def orthogonal_residual(signal: np.ndarray, basis: np.ndarray) -> np.ndarray:
@@ -120,6 +121,75 @@ def spectral_moments(
     )
 
 
+def normalized_spectral_diagnostics(
+    u: np.ndarray, weights: np.ndarray, masses_squared: np.ndarray
+) -> dict[str, object]:
+    """Evaluate the normalized V32 identities for a positive discrete measure."""
+    if np.any(weights < 0.0):
+        raise ValueError("Normalized diagnostics require non-negative weights.")
+    total_residue = float(np.sum(weights))
+    if not np.isfinite(total_residue) or total_residue <= 0.0:
+        raise ValueError("The total spectral residue must be finite and positive.")
+    probability = weights / total_residue
+    denominator = u[:, None] + masses_squared[None, :]
+    x_value = u[:, None] / denominator
+    response = np.sum(probability[None, :] * x_value, axis=1)
+    response_derivative = np.sum(
+        probability[None, :] * masses_squared[None, :] / denominator**2,
+        axis=1,
+    )
+    variance = np.sum(
+        probability[None, :] * (x_value - response[:, None]) ** 2,
+        axis=1,
+    )
+    variance_identity = response * (1.0 - response) - u * response_derivative
+    width = variance_identity / (response * (1.0 - response))
+    t_ratio = u * (1.0 - response) / response
+    a1, a2, a3 = spectral_moments(u, probability, masses_squared)
+    t_slope = a1 / a2 - u
+    t_ir = 1.0 / float(np.sum(probability / masses_squared))
+    t_uv = float(np.sum(probability * masses_squared))
+    jensen_lower = u / (u + t_uv)
+    jensen_upper = u / (u + t_ir)
+    return {
+        "response": response,
+        "response_derivative": response_derivative,
+        "variance": variance,
+        "variance_identity": variance_identity,
+        "width": width,
+        "t_ratio": t_ratio,
+        "t_slope": t_slope,
+        "slope_derivative": 2.0 * (a1 * a3 / a2**2 - 1.0),
+        "t_ir": t_ir,
+        "t_uv": t_uv,
+        "jensen_lower": jensen_lower,
+        "jensen_upper": jensen_upper,
+        "total_residue": total_residue,
+    }
+
+
+def maximum_positive_violation(values: np.ndarray) -> float:
+    """Return max(0,-min(values)) for an inequality values >= 0."""
+    return float(max(0.0, -float(np.min(values))))
+
+
+def assert_spectral_validation(summary: dict[str, float]) -> None:
+    """Stop if any normalized spectral identity exceeds numerical tolerance."""
+    tested = {
+        key: value
+        for key, value in summary.items()
+        if key.endswith("_maximum_violation")
+        or key.endswith("_maximum_absolute_residual")
+    }
+    failures = {
+        key: value
+        for key, value in tested.items()
+        if value > VALIDATION_TOLERANCE
+    }
+    if failures:
+        raise RuntimeError(f"Normalized spectral validation failed: {failures}")
+
+
 single_moments = spectral_moments(
     u_spectral, np.asarray([1.0]), np.asarray([1.0])
 )
@@ -132,6 +202,14 @@ spectral_styles = (
     ("single mode", single_moments, "#1f4e79"),
     ("two-mode mixture", mixture_moments, "#c55a11"),
 )
+normalized_diagnostics = {
+    "single_mode": normalized_spectral_diagnostics(
+        u_spectral, np.asarray([1.0]), np.asarray([1.0])
+    ),
+    "positive_two_mode": normalized_spectral_diagnostics(
+        u_spectral, np.asarray([0.65, 0.35]), np.asarray([0.4, 4.0])
+    ),
+}
 for label, moments, color in spectral_styles:
     a1, a2, a3 = moments
     response = u_spectral * a1
@@ -151,7 +229,7 @@ spectral_axes[0].set_ylabel(
     r"$\mathcal{R}=-\mathcal{D}_{\rm app}/(\rho_m\Delta_m)$"
 )
 spectral_axes[0].legend(frameon=False, loc="lower right")
-spectral_axes[1].set_ylabel(r"$t_{\rm eff}$")
+spectral_axes[1].set_ylabel(r"$t_{\rm slope}$")
 spectral_axes[2].set_ylabel(r"$A_1A_3/A_2^2-1$")
 spectral_axes[2].set_ylim(bottom=-0.002)
 for spectral_axis, panel in zip(spectral_axes, ("a", "b", "c")):
@@ -168,6 +246,161 @@ for spectral_axis, panel in zip(spectral_axes, ("a", "b", "c")):
 
 spectral_figure.tight_layout()
 spectral_figure.savefig(FIG_SPECTRAL, dpi=300, bbox_inches="tight")
+
+# Machine-readable verification of the normalized spectral results.
+single_diag = normalized_diagnostics["single_mode"]
+mixture_diag = normalized_diagnostics["positive_two_mode"]
+dominant_epsilon = 0.35
+dominant_pole = u_spectral / (u_spectral + 0.4)
+dominant_error = np.abs(mixture_diag["response"] - dominant_pole)
+approximation_u_min = 0.05
+approximation_u_max = 20.0
+approximation_window = (
+    (u_spectral >= approximation_u_min)
+    & (u_spectral <= approximation_u_max)
+)
+heavy_contribution = dominant_epsilon * u_spectral / (u_spectral + 4.0)
+heavy_window_bound = (
+    dominant_epsilon * approximation_u_max / (approximation_u_max + 4.0)
+)
+mixture_probability = np.asarray([0.65, 0.35])
+mixture_masses_squared = np.asarray([0.4, 4.0])
+narrow_probability = np.asarray([0.5, 0.5])
+narrow_masses_squared = np.asarray([0.9, 1.1])
+narrow_diag = normalized_spectral_diagnostics(
+    u_spectral, narrow_probability, narrow_masses_squared
+)
+narrow_mean = float(np.sum(narrow_probability * narrow_masses_squared))
+narrow_variance = float(
+    np.sum(narrow_probability * (narrow_masses_squared - narrow_mean) ** 2)
+)
+narrow_reference = u_spectral / (u_spectral + narrow_mean)
+narrow_bound = (
+    u_spectral * narrow_variance / (u_spectral + narrow_masses_squared.min()) ** 3
+)
+narrow_error = np.abs(narrow_diag["response"] - narrow_reference)
+
+spectral_validation = {
+    "grid": {
+        "u_min": float(u_spectral.min()),
+        "u_max": float(u_spectral.max()),
+        "points": int(u_spectral.size),
+    },
+    "single_mode": {
+        "total_residue": float(single_diag["total_residue"]),
+        "t_ir": float(single_diag["t_ir"]),
+        "t_uv": float(single_diag["t_uv"]),
+        "jensen_lower_maximum_violation": maximum_positive_violation(
+            single_diag["response"] - single_diag["jensen_lower"]
+        ),
+        "jensen_upper_maximum_violation": maximum_positive_violation(
+            single_diag["jensen_upper"] - single_diag["response"]
+        ),
+        "variance_identity_maximum_absolute_residual": float(
+            np.max(np.abs(single_diag["variance_identity"] - single_diag["variance"]))
+        ),
+        "width_lower_maximum_violation": maximum_positive_violation(
+            single_diag["width"]
+        ),
+        "width_upper_maximum_violation": maximum_positive_violation(
+            1.0 - single_diag["width"]
+        ),
+        "slope_monotonicity_maximum_violation": maximum_positive_violation(
+            single_diag["slope_derivative"]
+        ),
+        "ratio_monotonicity_maximum_violation": maximum_positive_violation(
+            np.diff(single_diag["t_ratio"])
+        ),
+        "estimator_equality_maximum_absolute_residual": float(
+            np.max(np.abs(single_diag["t_slope"] - single_diag["t_ratio"]))
+        ),
+    },
+    "positive_two_mode": {
+        "weights": mixture_probability.tolist(),
+        "masses_squared": mixture_masses_squared.tolist(),
+        "total_residue": float(mixture_diag["total_residue"]),
+        "t_ir": float(mixture_diag["t_ir"]),
+        "t_uv": float(mixture_diag["t_uv"]),
+        "jensen_lower_maximum_violation": maximum_positive_violation(
+            mixture_diag["response"] - mixture_diag["jensen_lower"]
+        ),
+        "jensen_upper_maximum_violation": maximum_positive_violation(
+            mixture_diag["jensen_upper"] - mixture_diag["response"]
+        ),
+        "variance_identity_maximum_absolute_residual": float(
+            np.max(np.abs(mixture_diag["variance_identity"] - mixture_diag["variance"]))
+        ),
+        "width_lower_maximum_violation": maximum_positive_violation(
+            mixture_diag["width"]
+        ),
+        "width_upper_maximum_violation": maximum_positive_violation(
+            1.0 - mixture_diag["width"]
+        ),
+        "slope_monotonicity_maximum_violation": maximum_positive_violation(
+            mixture_diag["slope_derivative"]
+        ),
+        "ratio_monotonicity_maximum_violation": maximum_positive_violation(
+            np.diff(mixture_diag["t_ratio"])
+        ),
+        "dominant_pole": {
+            "epsilon": dominant_epsilon,
+            "support_mass_squared": 0.4,
+            "maximum_error": float(np.max(dominant_error)),
+            "uniform_bound": dominant_epsilon,
+            "maximum_violation": maximum_positive_violation(
+                dominant_epsilon - dominant_error
+            ),
+        },
+        "heavy_support": {
+            "minimum_mass_squared": 4.0,
+            "u_window": [approximation_u_min, approximation_u_max],
+            "maximum_contribution": float(
+                np.max(heavy_contribution[approximation_window])
+            ),
+            "window_bound": heavy_window_bound,
+            "maximum_violation": maximum_positive_violation(
+                heavy_window_bound - heavy_contribution[approximation_window]
+            ),
+        },
+    },
+    "narrow_spectrum_benchmark": {
+        "weights": narrow_probability.tolist(),
+        "masses_squared": narrow_masses_squared.tolist(),
+        "u_window": [approximation_u_min, approximation_u_max],
+        "mean_mass_squared": narrow_mean,
+        "variance_mass_fourth": narrow_variance,
+        "maximum_error": float(np.max(narrow_error[approximation_window])),
+        "maximum_bound": float(np.max(narrow_bound[approximation_window])),
+        "maximum_violation": maximum_positive_violation(
+            narrow_bound[approximation_window]
+            - narrow_error[approximation_window]
+        ),
+    },
+    "numerical_tolerance": VALIDATION_TOLERANCE,
+}
+assert_spectral_validation(
+    {
+        f"single_mode_{key}": value
+        for key, value in spectral_validation["single_mode"].items()
+        if isinstance(value, float)
+    }
+    | {
+        f"positive_two_mode_{key}": value
+        for key, value in spectral_validation["positive_two_mode"].items()
+        if isinstance(value, float)
+    }
+    | {
+        "dominant_pole_maximum_violation": spectral_validation[
+            "positive_two_mode"
+        ]["dominant_pole"]["maximum_violation"],
+        "heavy_support_maximum_violation": spectral_validation[
+            "positive_two_mode"
+        ]["heavy_support"]["maximum_violation"],
+        "narrow_spectrum_maximum_violation": spectral_validation[
+            "narrow_spectrum_benchmark"
+        ]["maximum_violation"],
+    }
+)
 
 # Finite-scale chord diagnostic used only in the Supporting Information.
 u_left, u_right = 0.05, 20.0
@@ -735,6 +968,7 @@ metadata = {
         "covariance_minimum_eigenvalue": minimum_covariance_eigenvalue,
         "nuisance_rank": nuisance_rank,
         "profiled_information_eigenvalues": profiled_eigenvalues.tolist(),
+        "normalized_spectral_diagnostics": spectral_validation,
     },
     "results": survey_results,
 }

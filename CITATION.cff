@@ -6,6 +6,6 @@ authors:
   - family-names: Castronuovo
     given-names: Vitantonio
     orcid: "https://orcid.org/0009-0003-0066-0738"
-version: 1.0.0
-date-released: 2026-08-01
+version: 1.1.0
+date-released: 2026-08-13
 repository-code: "https://github.com/castronuovo/projected-geometric-closure"

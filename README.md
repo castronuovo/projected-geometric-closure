@@ -9,8 +9,9 @@ Repository: <https://github.com/castronuovo/projected-geometric-closure>
 The calculation has two layers:
 
 1. analytic tests of positive spectral measures, including the Stieltjes
-   hierarchy, the single-mode saturation diagnostics, and the finite-scale
-   chord test;
+   hierarchy, normalized Jensen envelopes, the variance identity, distinct
+   slope- and ratio-defined turnover estimators, controlled single-pole
+   bounds, and the finite-scale chord test;
 2. a fixed survey-inspired projection benchmark with three redshift slices,
    logarithmic scale bins, a non-diagonal window matrix, correlated covariance,
    and five nuisance columns spanning three smooth nuisance families.
@@ -59,10 +60,13 @@ The command regenerates:
 - `figs/fig3_survey_projected_spectral_benchmark.png`
 - `figs/figS1_finite_scale_spectral_diagnostics.png`
 
-The script stops if the window rows are not normalized or if the covariance is
-not positive definite. The JSON records the fixed analysis contract, the
-minimum covariance eigenvalue, the nuisance rank, the profiled-information
-eigenvalues, and the single-mode residuals.
+The script stops if the window rows are not normalized, if the covariance is
+not positive definite, or if a declared spectral inequality is violated
+beyond the recorded numerical tolerance. The JSON records the fixed analysis
+contract, the minimum covariance eigenvalue, the nuisance rank, the
+profiled-information eigenvalues, the single-mode residuals, and
+machine-readable validation of the normalized spectral identities and
+approximation bounds.
 
 ## Interpretation
 
@@ -79,6 +83,24 @@ redshift slices, scale range, and nuisance basis. They demonstrate
 class-conditional projected separation in this benchmark only. They are not
 detection probabilities or statements about current survey sensitivity.
 
+## Normalized spectral validation
+
+The `validation.normalized_spectral_diagnostics` object in
+`survey_projected_benchmark.json` records, for the one-mode and positive
+two-mode benchmarks:
+
+- the finite total residue and the harmonic/arithmetic endpoint scales;
+- maximum violations of the two Jensen bounds;
+- the residual in the exact variance identity;
+- the bounds `0 <= W <= 1`;
+- monotonicity checks for `t_slope` and `t_ratio`;
+- equality of the two estimators for a single pole;
+- dominant-pole, heavy-support, and narrow-spectrum error-bound checks.
+
+These are deterministic analytic-grid checks, not observational constraints.
+The mathematical results remain conditional on the hypotheses stated in the
+article and Supplemental Material.
+
 ## Integrity
 
 Run:
@@ -90,6 +112,10 @@ shasum -a 256 -c SHA256SUMS
 to verify the frozen source, results, and figures. Rendering hashes can change
 with the Matplotlib or font-stack version; the JSON and CSV files are the
 machine-readable scientific outputs.
+
+The frozen package corresponding to the revised manuscript is release
+[`v1.1.0`](https://github.com/castronuovo/projected-geometric-closure/releases/tag/v1.1.0).
+The earlier `v1.0.0` tag remains immutable and is not overwritten.
 
 ## License
 
