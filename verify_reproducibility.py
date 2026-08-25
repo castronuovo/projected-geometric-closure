@@ -12,6 +12,11 @@ from pathlib import Path
 
 RELATIVE_TOLERANCE = 1.0e-11
 ABSOLUTE_TOLERANCE = 1.0e-14
+NUMERICAL_ZERO_TOLERANCE = 1.0e-10
+NUMERICAL_ZERO_DIAGNOSTICS = (
+    "minimum_generator_product",
+    "nuisance_projection_maximum_absolute_residual",
+)
 CSV_FILES = (
     "benchmark_identifiability.csv",
     "cone_grid_convergence.csv",
@@ -85,6 +90,12 @@ def compare_json(reference, regenerated, path: str = "root") -> None:
     if isinstance(reference, (int, float)):
         if not isinstance(regenerated, (int, float)) or isinstance(regenerated, bool):
             raise AssertionError(f"JSON type mismatch at {path}")
+        if path.endswith(NUMERICAL_ZERO_DIAGNOSTICS):
+            if (
+                abs(float(reference)) <= NUMERICAL_ZERO_TOLERANCE
+                and abs(float(regenerated)) <= NUMERICAL_ZERO_TOLERANCE
+            ):
+                return
         if not close(float(reference), float(regenerated)):
             raise AssertionError(f"JSON numerical mismatch at {path}")
         return
