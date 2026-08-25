@@ -26,6 +26,7 @@ FIG_FLOW = ROOT / "figs" / "fig0_conceptual_flow.png"
 FIG_SURVEY = ROOT / "figs" / "fig3_survey_projected_spectral_benchmark.png"
 CSV = ROOT / "benchmark_identifiability.csv"
 SURVEY_CSV = ROOT / "survey_projected_benchmark.csv"
+GRID_CONVERGENCE_CSV = ROOT / "cone_grid_convergence.csv"
 SURVEY_JSON = ROOT / "survey_projected_benchmark.json"
 VALIDATION_TOLERANCE = 5.0e-12
 
@@ -173,6 +174,71 @@ def maximum_positive_violation(values: np.ndarray) -> float:
     return float(max(0.0, -float(np.min(values))))
 
 
+def loewner_matrices(
+    nodes: np.ndarray, weights: np.ndarray, masses_squared: np.ndarray
+) -> tuple[np.ndarray, np.ndarray]:
+    """Return the Stieltjes and response Loewner matrices."""
+    denominator = nodes[:, None] + masses_squared[None, :]
+    f_value = np.sum(weights[None, :] / denominator, axis=1)
+    response = nodes * f_value
+    f_derivative = -np.sum(weights[None, :] / denominator**2, axis=1)
+    response_derivative = np.sum(
+        weights[None, :] * masses_squared[None, :] / denominator**2,
+        axis=1,
+    )
+    node_difference = nodes[:, None] - nodes[None, :]
+    f_difference = f_value[:, None] - f_value[None, :]
+    response_difference = response[:, None] - response[None, :]
+    off_diagonal = ~np.eye(nodes.size, dtype=bool)
+    loewner_f = np.empty_like(node_difference)
+    loewner_response = np.empty_like(node_difference)
+    loewner_f[off_diagonal] = (
+        -f_difference[off_diagonal] / node_difference[off_diagonal]
+    )
+    loewner_response[off_diagonal] = (
+        response_difference[off_diagonal] / node_difference[off_diagonal]
+    )
+    np.fill_diagonal(loewner_f, -f_derivative)
+    np.fill_diagonal(loewner_response, response_derivative)
+    return loewner_f, loewner_response
+
+
+def spectral_transport_validation(
+    u: np.ndarray, scale_factors: np.ndarray,
+    weights: np.ndarray, physical_masses_squared: np.ndarray,
+) -> dict[str, float]:
+    """Validate the fixed normalized physical-spectrum transport identity."""
+    probability = weights / np.sum(weights)
+    maximum_residual = 0.0
+    maximum_response = 0.0
+    for scale_factor in scale_factors:
+        t_value = scale_factor**2 * physical_masses_squared
+        denominator = u[:, None] + t_value[None, :]
+        response = np.sum(
+            probability[None, :] * u[:, None] / denominator, axis=1
+        )
+        d_lna = -2.0 * np.sum(
+            probability[None, :]
+            * u[:, None] * t_value[None, :] / denominator**2,
+            axis=1,
+        )
+        two_u_d_u = 2.0 * np.sum(
+            probability[None, :]
+            * u[:, None] * t_value[None, :] / denominator**2,
+            axis=1,
+        )
+        maximum_residual = max(
+            maximum_residual, float(np.max(np.abs(d_lna + two_u_d_u)))
+        )
+        maximum_response = max(maximum_response, float(np.max(np.abs(response))))
+    return {
+        "scale_factor_minimum": float(np.min(scale_factors)),
+        "scale_factor_maximum": float(np.max(scale_factors)),
+        "maximum_absolute_residual": maximum_residual,
+        "maximum_response": maximum_response,
+    }
+
+
 def assert_spectral_validation(summary: dict[str, float]) -> None:
     """Stop if any normalized spectral identity exceeds numerical tolerance."""
     tested = {
@@ -279,6 +345,19 @@ narrow_bound = (
     u_spectral * narrow_variance / (u_spectral + narrow_masses_squared.min()) ** 3
 )
 narrow_error = np.abs(narrow_diag["response"] - narrow_reference)
+loewner_nodes = np.logspace(-2.0, 2.0, 12)
+loewner_single = loewner_matrices(
+    loewner_nodes, np.asarray([1.0]), np.asarray([1.0])
+)
+loewner_mixture = loewner_matrices(
+    loewner_nodes, np.asarray([0.65, 0.35]), np.asarray([0.4, 4.0])
+)
+transport_check = spectral_transport_validation(
+    u_spectral,
+    np.asarray([0.45, 0.60, 0.80, 1.00]),
+    np.asarray([0.65, 0.35]),
+    np.asarray([0.4, 4.0]),
+)
 
 spectral_validation = {
     "grid": {
@@ -376,6 +455,28 @@ spectral_validation = {
             - narrow_error[approximation_window]
         ),
     },
+    "loewner_positivity": {
+        "nodes": int(loewner_nodes.size),
+        "single_F_minimum_eigenvalue": float(
+            np.linalg.eigvalsh(loewner_single[0]).min()
+        ),
+        "single_response_minimum_eigenvalue": float(
+            np.linalg.eigvalsh(loewner_single[1]).min()
+        ),
+        "two_mode_F_minimum_eigenvalue": float(
+            np.linalg.eigvalsh(loewner_mixture[0]).min()
+        ),
+        "two_mode_response_minimum_eigenvalue": float(
+            np.linalg.eigvalsh(loewner_mixture[1]).min()
+        ),
+        "single_numerical_rank": int(
+            np.linalg.matrix_rank(loewner_single[0], tol=1.0e-10)
+        ),
+        "two_mode_numerical_rank": int(
+            np.linalg.matrix_rank(loewner_mixture[0], tol=1.0e-10)
+        ),
+    },
+    "fixed_physical_spectrum_transport": transport_check,
     "numerical_tolerance": VALIDATION_TOLERANCE,
 }
 assert_spectral_validation(
@@ -401,6 +502,19 @@ assert_spectral_validation(
         ]["maximum_violation"],
     }
 )
+if transport_check["maximum_absolute_residual"] > VALIDATION_TOLERANCE:
+    raise RuntimeError("Fixed-spectrum transport validation failed.")
+loewner_minima = [
+    spectral_validation["loewner_positivity"][key]
+    for key in (
+        "single_F_minimum_eigenvalue",
+        "single_response_minimum_eigenvalue",
+        "two_mode_F_minimum_eigenvalue",
+        "two_mode_response_minimum_eigenvalue",
+    )
+]
+if min(loewner_minima) < -VALIDATION_TOLERANCE:
+    raise RuntimeError("Loewner positivity validation failed.")
 
 # Finite-scale chord diagnostic used only in the Supporting Information.
 u_left, u_right = 0.05, 20.0
@@ -515,85 +629,156 @@ figure.savefig(FIG_IDENTIFIABILITY, dpi=300, bbox_inches="tight")
 # Conceptual map: every arrow carries the assumption used at that step.
 # ---------------------------------------------------------------------------
 
-flow_figure, flow_axis = plt.subplots(figsize=(7.0, 3.05))
+flow_figure, flow_axis = plt.subplots(figsize=(7.8, 3.25))
 flow_axis.set_xlim(0.0, 1.0)
 flow_axis.set_ylim(0.0, 1.0)
 flow_axis.axis("off")
+flow_axis.set_facecolor("#fbfcfe")
+flow_axis.text(
+    0.5,
+    0.965,
+    "FROM GEOMETRIC PROJECTION TO AN OBSERVABLE TEST",
+    ha="center",
+    va="center",
+    fontsize=8.8,
+    fontweight="bold",
+    color="#243447",
+)
+flow_axis.plot([0.03, 0.97], [0.915, 0.915], color="#d9e1e8", linewidth=0.8)
 
-flow_boxes = (
-    ("5D projected\nresponse", 0.04, 0.64, "#d9eaf7"),
-    (r"$\{\mu,\Sigma\}$", 0.375, 0.64, "#e8f1f8"),
+flow_cards = (
     (
+        "01  GEOMETRIC INPUT",
+        "5D projected\nresponse",
+        0.03,
+        0.60,
+        "#2f6f9f",
+    ),
+    (
+        "02  OBSERVABLE PAIR",
+        r"response functions" + "\n" + r"$\{\mu,\Sigma\}$",
+        0.3675,
+        0.60,
+        "#397da8",
+    ),
+    (
+        "03  PROTECTED CLOSURE",
         "rank-one apparent sources"
         + "\n"
         + r"$\mathcal{D}_{\rm app}=\mathcal{A}_{\rm app}$",
-        0.71,
-        0.64,
-        "#e2f0d9",
+        0.705,
+        0.60,
+        "#3d8b73",
     ),
-    ("Stieltjes hierarchy\nand saturation", 0.71, 0.16, "#fff2cc"),
     (
-        r"survey map"
+        "04  SPECTRAL TEST",
+        "Stieltjes hierarchy"
+        + "\n"
+        + "and single-mode saturation",
+        0.705,
+        0.11,
+        "#b4872c",
+    ),
+    (
+        "05  SURVEY PROJECTION",
+        "window, covariance, nuisances"
         + "\n"
         + r"$\{\mathbf{W},\mathbf{C},\mathbf{X}\}$",
-        0.375,
-        0.16,
-        "#fce4d6",
+        0.3675,
+        0.11,
+        "#b76543",
     ),
     (
-        "profiled information\n" + r"$\mathbf{F}_{S|X}$",
-        0.04,
-        0.16,
-        "#eadcf8",
+        "06  DECISION SPACE",
+        "profiled information"
+        + "\n"
+        + r"$\mathbf{F}_{S|X}$",
+        0.03,
+        0.11,
+        "#735a9e",
     ),
 )
-box_width = 0.25
-box_height = 0.22
-for label, box_x, box_y, color in flow_boxes:
-    box = FancyBboxPatch(
+box_width = 0.265
+box_height = 0.225
+for heading, body, box_x, box_y, accent in flow_cards:
+    shadow = FancyBboxPatch(
+        (box_x + 0.006, box_y - 0.009),
+        box_width,
+        box_height,
+        boxstyle="round,pad=0.012,rounding_size=0.018",
+        linewidth=0.0,
+        facecolor="#cfd8e2",
+        alpha=0.55,
+        zorder=1,
+    )
+    card = FancyBboxPatch(
         (box_x, box_y),
         box_width,
         box_height,
-        boxstyle="round,pad=0.012,rounding_size=0.015",
-        linewidth=0.9,
-        edgecolor="0.25",
-        facecolor=color,
+        boxstyle="round,pad=0.012,rounding_size=0.018",
+        linewidth=1.15,
+        edgecolor=accent,
+        facecolor="white",
+        zorder=2,
     )
-    flow_axis.add_patch(box)
+    flow_axis.add_patch(shadow)
+    flow_axis.add_patch(card)
+    flow_axis.plot(
+        [box_x + 0.018, box_x + 0.018],
+        [box_y + 0.027, box_y + box_height - 0.027],
+        color=accent,
+        linewidth=4.0,
+        solid_capstyle="round",
+        zorder=3,
+    )
     flow_axis.text(
-        box_x + box_width / 2,
-        box_y + box_height / 2,
-        label,
+        box_x + 0.038,
+        box_y + box_height - 0.045,
+        heading,
+        ha="left",
+        va="center",
+        fontsize=6.15,
+        fontweight="bold",
+        color=accent,
+        zorder=4,
+    )
+    flow_axis.text(
+        box_x + box_width / 2 + 0.008,
+        box_y + 0.090,
+        body,
         ha="center",
         va="center",
-        fontsize=7.3,
+        fontsize=7.45,
+        color="#202b36",
+        linespacing=1.25,
+        zorder=4,
     )
 
 arrow_labels = (
     "Gauss–Codazzi",
-    r"protected $\Sigma=1$",
-    r"$d\nu\geq0$",
+    r"protected branch: $\Sigma=1$",
+    r"positive support: $d\nu\geq0$",
     "forward model",
-    "profiling",
+    "nuisance profiling",
 )
 arrow_endpoints = (
-    ((0.04 + box_width, 0.64 + box_height / 2),
-     (0.375, 0.64 + box_height / 2)),
-    ((0.375 + box_width, 0.64 + box_height / 2),
-     (0.71, 0.64 + box_height / 2)),
-    ((0.71 + box_width / 2, 0.64),
-     (0.71 + box_width / 2, 0.16 + box_height)),
-    ((0.71, 0.16 + box_height / 2),
-     (0.375 + box_width, 0.16 + box_height / 2)),
-    ((0.375, 0.16 + box_height / 2),
-     (0.04 + box_width, 0.16 + box_height / 2)),
+    ((0.03 + box_width, 0.60 + box_height / 2),
+     (0.3675, 0.60 + box_height / 2)),
+    ((0.3675 + box_width, 0.60 + box_height / 2),
+     (0.705, 0.60 + box_height / 2)),
+    ((0.705 + box_width / 2, 0.60),
+     (0.705 + box_width / 2, 0.11 + box_height)),
+    ((0.705, 0.11 + box_height / 2),
+     (0.3675 + box_width, 0.11 + box_height / 2)),
+    ((0.3675, 0.11 + box_height / 2),
+     (0.03 + box_width, 0.11 + box_height / 2)),
 )
 arrow_label_positions = (
-    (0.3325, 0.93, "center"),
-    (0.6675, 0.93, "center"),
-    (0.855, 0.51, "left"),
-    (0.6675, 0.08, "center"),
-    (0.3325, 0.08, "center"),
+    (0.331, 0.765, "center"),
+    (0.669, 0.765, "center"),
+    (0.858, 0.470, "left"),
+    (0.669, 0.055, "center"),
+    (0.331, 0.055, "center"),
 )
 for arrow_label, endpoints, label_position in zip(
     arrow_labels, arrow_endpoints, arrow_label_positions
@@ -602,11 +787,13 @@ for arrow_label, endpoints, label_position in zip(
         endpoints[0],
         endpoints[1],
         arrowstyle="-|>",
-        mutation_scale=10,
-        linewidth=1.0,
-        color="0.25",
-        shrinkA=3,
-        shrinkB=3,
+        mutation_scale=11,
+        linewidth=1.25,
+        color="#405263",
+        shrinkA=4,
+        shrinkB=4,
+        connectionstyle="arc3,rad=0.0",
+        zorder=5,
     )
     flow_axis.add_patch(arrow)
     flow_axis.text(
@@ -615,12 +802,19 @@ for arrow_label, endpoints, label_position in zip(
         arrow_label,
         ha=label_position[2],
         va="center",
-        fontsize=7.0,
-        color="0.2",
-        bbox={"facecolor": "white", "edgecolor": "none", "pad": 0.4},
+        fontsize=6.45,
+        fontweight="medium",
+        color="#405263",
+        bbox={
+            "boxstyle": "round,pad=0.20,rounding_size=0.4",
+            "facecolor": "#f4f7fa",
+            "edgecolor": "#d8e0e7",
+            "linewidth": 0.45,
+        },
+        zorder=6,
     )
 
-flow_figure.tight_layout(pad=0.25)
+flow_figure.tight_layout(pad=0.35)
 flow_figure.savefig(FIG_FLOW, dpi=300, bbox_inches="tight")
 
 # ---------------------------------------------------------------------------
@@ -870,6 +1064,53 @@ def best_single_mode_fit(target: np.ndarray) -> dict[str, float]:
     return best
 
 
+def nonnegative_least_squares(
+    design: np.ndarray,
+    target: np.ndarray,
+    maximum_iterations: int = 5000,
+    tolerance: float = 1.0e-11,
+) -> tuple[np.ndarray, np.ndarray, int]:
+    """Solve a fixed finite-grid cone projection by an active-set method."""
+    column_count = design.shape[1]
+    weights = np.zeros(design.shape[1])
+    passive = np.zeros(column_count, dtype=bool)
+    for iteration in range(1, maximum_iterations + 1):
+        with np.errstate(divide="ignore", over="ignore", invalid="ignore"):
+            residual = target - design @ weights
+            correlations = design.T @ residual
+        if not np.all(np.isfinite(residual)) or not np.all(np.isfinite(correlations)):
+            raise RuntimeError("Non-finite value in the spectral-cone solver.")
+        eligible = np.where((~passive) & (correlations > tolerance))[0]
+        if eligible.size == 0:
+            break
+        selected = eligible[np.argmax(correlations[eligible])]
+        passive[selected] = True
+        while True:
+            trial = np.zeros(column_count)
+            trial[passive], _, _, _ = np.linalg.lstsq(
+                design[:, passive], target, rcond=1.0e-12
+            )
+            if np.all(trial[passive] > 0.0):
+                weights = trial
+                break
+            nonpositive = passive & (trial <= 0.0)
+            alpha = np.min(
+                weights[nonpositive]
+                / (weights[nonpositive] - trial[nonpositive])
+            )
+            weights = weights + alpha * (trial - weights)
+            remove = passive & (weights <= tolerance)
+            weights[remove] = 0.0
+            passive[remove] = False
+    else:
+        raise RuntimeError("Spectral-cone active-set solver did not converge.")
+    with np.errstate(divide="ignore", over="ignore", invalid="ignore"):
+        residual = target - design @ weights
+    if not np.all(np.isfinite(residual)):
+        raise RuntimeError("Non-finite cone-projection residual.")
+    return weights, residual, iteration
+
+
 def nuisance_fraction(target: np.ndarray) -> float:
     """Return the signal fraction that survives nuisance-only profiling."""
     residual, _ = profiled_residual(
@@ -916,12 +1157,128 @@ nuisance_rank = int(
 nuisance_projector = (
     u_nuisance[:, :nuisance_rank] @ u_nuisance[:, :nuisance_rank].T
 )
+nuisance_orthobasis = u_nuisance[:, :nuisance_rank]
 response_matrix = np.column_stack([single_signal, two_mode_signal])
 whitened_response = whiten(response_matrix, covariance_cholesky)
 profiled_information = whitened_response.T @ (
     np.eye(n_data) - nuisance_projector
 ) @ whitened_response
 profiled_eigenvalues = np.linalg.eigvalsh(profiled_information)
+
+def projected_cone_design(masses: np.ndarray) -> np.ndarray:
+    """Return nuisance-hardened unit-residue generators on a mass grid."""
+    columns = []
+    for cone_mass in masses:
+        cone_template = np.einsum(
+            "ij,j->i",
+            survey_window,
+            protected_response(
+                k_bins,
+                redshifts,
+                np.asarray([cone_mass]),
+                np.asarray([1.0]),
+                1.0,
+            ),
+            optimize=False,
+        )
+        whitened_cone_template = whiten(cone_template, covariance_cholesky)
+        columns.append(
+            whitened_cone_template
+            - nuisance_orthobasis
+            @ (nuisance_orthobasis.T @ whitened_cone_template)
+        )
+    return np.column_stack(columns)
+
+
+def hardened_signal(signal: np.ndarray) -> np.ndarray:
+    """Whiten a signal and remove the declared nuisance subspace."""
+    whitened_signal = whiten(signal, covariance_cholesky)
+    return whitened_signal - nuisance_orthobasis @ (
+        nuisance_orthobasis.T @ whitened_signal
+    )
+
+
+# Finite-grid realization of the nuisance-hardened positive spectral cone.
+cone_mass_bank = np.unique(np.concatenate([mass_bank, single_mass, two_masses]))
+cone_design = projected_cone_design(cone_mass_bank)
+cone_effective_rank_tolerance = 1.0e-10
+cone_effective_rank = int(
+    np.linalg.matrix_rank(cone_design, tol=cone_effective_rank_tolerance)
+)
+# Conic Caratheodory applies exactly in the declared nuisance-orthogonal
+# ambient data space. The tolerance-dependent matrix rank is only an
+# effective numerical diagnostic and is not used as an exact atom bound.
+declared_nuisance_dimension = int(nuisance_observed.shape[1])
+if nuisance_rank != declared_nuisance_dimension:
+    raise RuntimeError("Declared nuisance columns are not linearly independent.")
+cone_ambient_dimension = int(n_data - declared_nuisance_dimension)
+cone_results = {}
+for scenario_name, scenario_signal in survey_scenarios.items():
+    hardened_scenario = hardened_signal(scenario_signal)
+    cone_weights, cone_residual, cone_iterations = nonnegative_least_squares(
+        cone_design, hardened_scenario
+    )
+    witness = -cone_residual
+    with np.errstate(divide="ignore", over="ignore", invalid="ignore"):
+        dual_values = cone_design.T @ witness
+    if not np.all(np.isfinite(dual_values)):
+        raise RuntimeError("Non-finite spectral-cone dual certificate.")
+    target_norm_squared = float(hardened_scenario @ hardened_scenario)
+    residual_norm_squared = float(cone_residual @ cone_residual)
+    cone_results[scenario_name] = {
+        "residual_chi2": residual_norm_squared,
+        "hardened_residual_fraction": residual_norm_squared / target_norm_squared,
+        "active_grid_weights": int(np.sum(cone_weights > 1.0e-8)),
+        "iterations": int(cone_iterations),
+        "dual_minimum_generator_product": float(np.min(dual_values)),
+        "dual_witness_data_product": float(witness @ hardened_scenario),
+        "complementarity_maximum_absolute_residual": float(
+            np.max(np.abs(cone_weights * dual_values))
+        ),
+    }
+for compatible_name in ("single_mode", "positive_two_mode"):
+    if cone_results[compatible_name]["hardened_residual_fraction"] > 1.0e-10:
+        raise RuntimeError(f"Positive target left the finite spectral cone: {compatible_name}")
+signed_cone_result = cone_results["signed_out_of_class"]
+if signed_cone_result["hardened_residual_fraction"] <= 1.0e-3:
+    raise RuntimeError("Signed target was not separated from the positive cone.")
+if signed_cone_result["dual_minimum_generator_product"] < -1.0e-10:
+    raise RuntimeError("The stored cone witness violates dual feasibility.")
+if signed_cone_result["dual_witness_data_product"] >= 0.0:
+    raise RuntimeError("The stored cone witness does not separate the signed target.")
+
+# Mesh-convergence audit.  These logarithmic grids deliberately do not add the
+# injected support points: convergence must follow from mesh refinement rather
+# than exact interpolation of the targets.  The covering radius is measured in
+# the same mass coordinate used to build the generators.
+cone_grid_convergence = []
+for requested_points in (81, 161, 321, 641):
+    convergence_masses = np.geomspace(0.10, 0.80, requested_points)
+    convergence_design = projected_cone_design(convergence_masses)
+    covering_radius = 0.5 * float(np.max(np.diff(convergence_masses)))
+    convergence_row = {
+        "mass_grid_points": int(requested_points),
+        "covering_radius_h_Mpc": covering_radius,
+    }
+    for scenario_name, scenario_signal in survey_scenarios.items():
+        convergence_target = hardened_signal(scenario_signal)
+        _, convergence_residual, _ = nonnegative_least_squares(
+            convergence_design, convergence_target
+        )
+        convergence_row[f"{scenario_name}_hardened_residual_fraction"] = float(
+            np.dot(convergence_residual, convergence_residual)
+            / np.dot(convergence_target, convergence_target)
+        )
+    cone_grid_convergence.append(convergence_row)
+
+signed_convergence = np.asarray(
+    [
+        row["signed_out_of_class_hardened_residual_fraction"]
+        for row in cone_grid_convergence
+    ]
+)
+if np.max(np.abs(np.diff(signed_convergence[-3:]))) > 5.0e-5:
+    raise RuntimeError("Signed-target cone distance failed the mesh-convergence audit.")
 
 metadata = {
     "contract": {
@@ -969,6 +1326,17 @@ metadata = {
         "nuisance_rank": nuisance_rank,
         "profiled_information_eigenvalues": profiled_eigenvalues.tolist(),
         "normalized_spectral_diagnostics": spectral_validation,
+        "positive_spectral_cone": {
+            "mass_grid_points": int(cone_mass_bank.size),
+            "nuisance_orthogonal_ambient_dimension": cone_ambient_dimension,
+            "exact_caratheodory_atom_bound": cone_ambient_dimension,
+            "projected_cone_effective_rank": cone_effective_rank,
+            "effective_rank_absolute_tolerance": cone_effective_rank_tolerance,
+            "mass_minimum_h_Mpc": float(cone_mass_bank.min()),
+            "mass_maximum_h_Mpc": float(cone_mass_bank.max()),
+            "results": cone_results,
+            "mesh_convergence": cone_grid_convergence,
+        },
     },
     "results": survey_results,
 }
@@ -1006,6 +1374,12 @@ with SURVEY_CSV.open("w", newline="", encoding="utf-8") as output_file:
                 result["hardened_residual_fraction"],
             ]
         )
+
+with GRID_CONVERGENCE_CSV.open("w", newline="", encoding="utf-8") as output_file:
+    fieldnames = list(cone_grid_convergence[0].keys())
+    writer = csv.DictWriter(output_file, fieldnames=fieldnames)
+    writer.writeheader()
+    writer.writerows(cone_grid_convergence)
 
 survey_figure, survey_axes = plt.subplots(2, 2, figsize=(7.1, 5.25))
 image_window = survey_axes[0, 0].imshow(
@@ -1080,7 +1454,9 @@ bars = survey_axes[1, 1].bar(
 )
 survey_axes[1, 1].set_yscale("log")
 survey_axes[1, 1].set_ylim(1.0e-4, 1.0)
-survey_axes[1, 1].set_ylabel(r"fraction of nuisance-hardened signal")
+survey_axes[1, 1].set_ylabel(
+    "fraction of nuisance-hardened\nquadratic information"
+)
 survey_axes[1, 1].set_title("After window, covariance, and nuisances")
 survey_axes[1, 1].grid(axis="y", alpha=0.2)
 bar_labels = tuple(

@@ -1,11 +1,11 @@
 cff-version: 1.2.0
 message: "If you use this benchmark, please cite the associated manuscript."
-title: "Projected Geometric Closure: Reproducibility Benchmark"
+title: "Reproducibility Package for Projected Geometric Dark-Sector Closure: Five-Dimensional Boundary-Scalar Benchmark, Single-Pole Stability, and Observable Spectral Complexity"
 type: software
 authors:
   - family-names: Castronuovo
     given-names: Vitantonio
     orcid: "https://orcid.org/0009-0003-0066-0738"
-version: 1.1.1
-date-released: 2026-08-13
+version: 1.2.0
+date-released: 2026-08-25
 repository-code: "https://github.com/castronuovo/projected-geometric-closure"

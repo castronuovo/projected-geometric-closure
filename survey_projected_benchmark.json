@@ -85,10 +85,25 @@
   "validation": {
     "covariance_minimum_eigenvalue": 1.1987176549089959e-05,
     "normalized_spectral_diagnostics": {
+      "fixed_physical_spectrum_transport": {
+        "maximum_absolute_residual": 0.0,
+        "maximum_response": 0.9989393334831673,
+        "scale_factor_maximum": 1.0,
+        "scale_factor_minimum": 0.45
+      },
       "grid": {
         "points": 400,
         "u_max": 316.22776601683796,
         "u_min": 0.0031622776601683794
+      },
+      "loewner_positivity": {
+        "nodes": 12,
+        "single_F_minimum_eigenvalue": -1.3179163045252979e-14,
+        "single_numerical_rank": 1,
+        "single_response_minimum_eigenvalue": -4.3175454996170217e-16,
+        "two_mode_F_minimum_eigenvalue": -1.6755695571541963e-15,
+        "two_mode_numerical_rank": 2,
+        "two_mode_response_minimum_eigenvalue": -5.736083802989413e-16
       },
       "narrow_spectrum_benchmark": {
         "masses_squared": [
@@ -162,6 +177,74 @@
       }
     },
     "nuisance_rank": 5,
+    "positive_spectral_cone": {
+      "effective_rank_absolute_tolerance": 1e-10,
+      "exact_caratheodory_atom_bound": 49,
+      "mass_grid_points": 323,
+      "mass_maximum_h_Mpc": 0.8,
+      "mass_minimum_h_Mpc": 0.1,
+      "mesh_convergence": [
+        {
+          "covering_radius_h_Mpc": 0.010263243519317067,
+          "mass_grid_points": 81,
+          "positive_two_mode_hardened_residual_fraction": 1.2909990499917886e-10,
+          "signed_out_of_class_hardened_residual_fraction": 0.1740942882761668,
+          "single_mode_hardened_residual_fraction": 1.9366285296743942e-08
+        },
+        {
+          "covering_radius_h_Mpc": 0.005164967876110038,
+          "mass_grid_points": 161,
+          "positive_two_mode_hardened_residual_fraction": 8.156314475236107e-12,
+          "signed_out_of_class_hardened_residual_fraction": 0.17409157433458167,
+          "single_mode_hardened_residual_fraction": 5.279736515259189e-10
+        },
+        {
+          "covering_radius_h_Mpc": 0.0025908747278743927,
+          "mass_grid_points": 321,
+          "positive_two_mode_hardened_residual_fraction": 5.070385242280149e-13,
+          "signed_out_of_class_hardened_residual_fraction": 0.17409013106640533,
+          "single_mode_hardened_residual_fraction": 7.49313338679888e-11
+        },
+        {
+          "covering_radius_h_Mpc": 0.0012975418826086105,
+          "mass_grid_points": 641,
+          "positive_two_mode_hardened_residual_fraction": 1.5486193114154363e-12,
+          "signed_out_of_class_hardened_residual_fraction": 0.17409008146430135,
+          "single_mode_hardened_residual_fraction": 2.2225191613775006e-12
+        }
+      ],
+      "nuisance_orthogonal_ambient_dimension": 49,
+      "projected_cone_effective_rank": 16,
+      "results": {
+        "positive_two_mode": {
+          "active_grid_weights": 3,
+          "complementarity_maximum_absolute_residual": 2.2711522429273135e-17,
+          "dual_minimum_generator_product": -1.2395560720701297e-12,
+          "dual_witness_data_product": -2.4768409900489198e-14,
+          "hardened_residual_fraction": 5.07038524235808e-13,
+          "iterations": 11,
+          "residual_chi2": 2.4787618470870936e-14
+        },
+        "signed_out_of_class": {
+          "active_grid_weights": 2,
+          "complementarity_maximum_absolute_residual": 1.2480164805848817e-17,
+          "dual_minimum_generator_product": 7.806255641895632e-17,
+          "dual_witness_data_product": -0.021181787184704905,
+          "hardened_residual_fraction": 0.17409013106640533,
+          "iterations": 10,
+          "residual_chi2": 0.02118178718470492
+        },
+        "single_mode": {
+          "active_grid_weights": 1,
+          "complementarity_maximum_absolute_residual": 3.4845471017949056e-17,
+          "dual_minimum_generator_product": -9.97293032456966e-16,
+          "dual_witness_data_product": -3.4845471017952784e-17,
+          "hardened_residual_fraction": 3.383061342915473e-29,
+          "iterations": 9,
+          "residual_chi2": 3.745235321864633e-30
+        }
+      }
+    },
     "profiled_information_eigenvalues": [
       0.00424951828337891,
       0.15534304351762307

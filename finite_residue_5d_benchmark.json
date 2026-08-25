@@ -1,0 +1,45 @@
+{
+  "contract": {
+    "L": 1.0,
+    "delta_h": 0.004,
+    "h": -0.996,
+    "h_c": -1.0,
+    "mode_count": 512,
+    "momentum_count": 500,
+    "q_max_over_critical_gap_squared": 0.2,
+    "r_b": 12.0
+  },
+  "heavy_sector": {
+    "critical_gap_squared": 10.0341804029816,
+    "critical_gap_x": 3.1676774461711847,
+    "first_mass_squared_at_h": 10.034185801550642,
+    "heavy_weight_critical_limit": 0.02702702702702703,
+    "heavy_weight_exact": 0.027028164226562623
+  },
+  "light_pole": {
+    "leading_relative_error": 5.843858481568986e-07,
+    "mass_squared_exact": 0.0003243241347938897,
+    "mass_squared_leading": 0.0003243243243243243,
+    "mass_squared_second_order": 0.00032432413479951825,
+    "second_order_relative_error": 1.7354562231730597e-11,
+    "weight_critical_limit": 0.9729729729729729,
+    "weight_exact": 0.9729718357734374
+  },
+  "scope": "Exactly soluble local 5D scalar interval benchmark; not the full coupled gravitational master sector and not a survey calculation.",
+  "sum_rule": {
+    "exact_boundary_residue_sum": 0.08333333333333333,
+    "exact_normalized_weight": 1.0,
+    "truncated_boundary_residue_sum": 0.08333058213462992,
+    "truncated_normalized_weight": 0.9999669856155589,
+    "truncation_shortfall": 3.301438444114346e-05
+  },
+  "validation": {
+    "all_residues_positive": true,
+    "critical_gap_equation_residual": 2.6020852139652106e-16,
+    "critical_gap_in_declared_interval": true,
+    "heavy_bound_maximum_violation": 0.0,
+    "heavy_response_minimum": 5.686082317881216e-10,
+    "partial_weight_below_exact_sum": true,
+    "spectral_resolvent_relative_error": 8.769873716119037e-12
+  }
+}

@@ -12,11 +12,20 @@ from pathlib import Path
 
 RELATIVE_TOLERANCE = 1.0e-11
 ABSOLUTE_TOLERANCE = 1.0e-14
-FILES = (
+CSV_FILES = (
     "benchmark_identifiability.csv",
+    "cone_grid_convergence.csv",
+    "finite_residue_5d_spectrum.csv",
     "survey_projected_benchmark.csv",
-    "survey_projected_benchmark.json",
+    "conditional_information_requirement.csv",
+    "injection_recovery_summary.csv",
 )
+JSON_FILES = (
+    "finite_residue_5d_benchmark.json",
+    "survey_projected_benchmark.json",
+    "injection_recovery_summary.json",
+)
+FILES = CSV_FILES + JSON_FILES
 
 
 def close(reference: float, regenerated: float) -> bool:
@@ -102,15 +111,15 @@ def main() -> None:
     reference_directory = Path(sys.argv[1]).resolve()
     regenerated_directory = Path(__file__).resolve().parent
 
-    for filename in FILES[:2]:
+    for filename in CSV_FILES:
         compare_csv(reference_directory / filename, regenerated_directory / filename)
 
-    json_filename = FILES[2]
-    with (reference_directory / json_filename).open(encoding="utf-8") as stream:
-        reference_json = json.load(stream)
-    with (regenerated_directory / json_filename).open(encoding="utf-8") as stream:
-        regenerated_json = json.load(stream)
-    compare_json(reference_json, regenerated_json)
+    for json_filename in JSON_FILES:
+        with (reference_directory / json_filename).open(encoding="utf-8") as stream:
+            reference_json = json.load(stream)
+        with (regenerated_directory / json_filename).open(encoding="utf-8") as stream:
+            regenerated_json = json.load(stream)
+        compare_json(reference_json, regenerated_json)
     print("Scientific outputs agree within the declared numerical tolerances.")
 
 

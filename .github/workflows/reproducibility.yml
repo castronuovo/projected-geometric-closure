@@ -22,10 +22,20 @@ jobs:
           mkdir -p "$RUNNER_TEMP/frozen-outputs"
           cp \
             benchmark_identifiability.csv \
+            cone_grid_convergence.csv \
+            finite_residue_5d_spectrum.csv \
             survey_projected_benchmark.csv \
+            conditional_information_requirement.csv \
+            injection_recovery_summary.csv \
+            finite_residue_5d_benchmark.json \
             survey_projected_benchmark.json \
+            injection_recovery_summary.json \
             "$RUNNER_TEMP/frozen-outputs/"
       - name: Recompute analytic and projected benchmarks
-        run: python benchmark_projected_spectral.py
+        run: |
+          python benchmark_projected_spectral.py
+          python finite_residue_5d_benchmark.py
+          python injection_recovery.py
+          python conditional_information_requirement.py
       - name: Verify numerically reproducible scientific outputs
         run: python verify_reproducibility.py "$RUNNER_TEMP/frozen-outputs"
