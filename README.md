@@ -281,7 +281,8 @@ machine-readable scientific outputs.
 
 The release target corresponding to the revised manuscript is
 [`v1.2.0`](https://github.com/castronuovo/projected-geometric-closure/releases/tag/v1.2.0).
-It must be published before manuscript submission.
+It was published on 25 August 2026 and is the frozen reproducibility package
+supporting the submitted manuscript.
 The earlier `v1.0.0` and `v1.1.0` tags remain immutable and are not
 overwritten.
 
