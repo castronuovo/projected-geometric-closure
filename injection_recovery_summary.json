@@ -28,7 +28,7 @@
     "noise_model": "correlated Gaussian draws from the fixed synthetic covariance",
     "nuisance_coefficient_sigma": 0.02,
     "observational_data_ingested": false,
-    "recovery": "fixed nuisance projection, non-negative amplitude, 321-point mass bank",
+    "recovery": "fixed nuisance projection, non-negative amplitude, 321-point logarithmic grid plus exact reference mass (322 templates)",
     "seed": 20260821,
     "target_norms": [
       0.0,

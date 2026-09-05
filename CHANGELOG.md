@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.2.1 — 2026-09-05
+
+- Corrected reproducibility metadata to distinguish the 321-point logarithmic mass grid from the exact reference mass, for 322 distinct templates.
+- Updated the injection--recovery contract and SHA-256 manifest accordingly.
+- Clarified package documentation without changing stored benchmark outputs or numerical results.
+
 ## 1.2.0 — 2026-08-25
 
 - Added an exactly soluble local five-dimensional scalar benchmark with

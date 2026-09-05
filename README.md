@@ -40,7 +40,7 @@ mixture, and a signed response outside the positive-spectrum class. It is a
 structural identifiability benchmark. It does not ingest DESI or KiDS data, run
 a Boltzmann solver, integrate a growth equation, map the kernel response to a
 named survey observable, evaluate a likelihood, or provide a survey forecast.
-The single-mode fit profiles a non-negative amplitude over 321 masses in
+The single-mode fit profiles a non-negative amplitude over a 321-point logarithmic grid plus the exact single-target mass (322 distinct templates) in
 `0.100--0.800 h Mpc^-1`, within the inherited quasi-static benchmark range.
 
 ## Environment
@@ -170,7 +170,7 @@ mocks.
 synthetic covariance, injects random amplitudes of all five declared nuisance
 columns, and adds one of four predeclared response-space targets. Every mock is
 then passed through the same whitening, nuisance projection, non-negative
-amplitude fit, and 321-point mass scan as the deterministic benchmark. The
+amplitude fit, and 321-point logarithmic grid plus exact reference mass as the deterministic benchmark. The
 configuration in `injection_recovery_config.json` fixes the random seed, 5000
 calibration realizations, 5000 statistically independent evaluation
 realizations, a 95-percent decision quantile, and target norms
@@ -280,9 +280,9 @@ with the Matplotlib or font-stack version; the JSON and CSV files are the
 machine-readable scientific outputs.
 
 The release target corresponding to the revised manuscript is
-[`v1.2.0`](https://github.com/castronuovo/projected-geometric-closure/releases/tag/v1.2.0).
-It was published on 25 August 2026 and is the frozen reproducibility package
-supporting the submitted manuscript.
+[`v1.2.1`](https://github.com/castronuovo/projected-geometric-closure/releases/tag/v1.2.1).
+It was published on 5 September 2026 and is the frozen reproducibility package
+supporting the associated manuscript.
 The earlier `v1.0.0` and `v1.1.0` tags remain immutable and are not
 overwritten.
 

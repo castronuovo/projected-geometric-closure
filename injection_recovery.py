@@ -412,7 +412,7 @@ def main() -> None:
             "observational_data_ingested": False,
             "interpretation": "conditional null-point response-space calibration, not a survey forecast",
             "noise_model": "correlated Gaussian draws from the fixed synthetic covariance",
-            "recovery": "fixed nuisance projection, non-negative amplitude, 321-point mass bank",
+            "recovery": "fixed nuisance projection, non-negative amplitude, 321-point logarithmic grid plus exact reference mass (322 templates)",
             "dual_test": "fixed deterministic signed-target witness; no witness scan",
         },
         "calibration": {
