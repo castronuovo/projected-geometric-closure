@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.3.0 — 2026-09-06
+
+- Added a nested-cone cross-epoch transport diagnostic that separates a shared stationary positive spectrum from independently positive epoch responses under a fixed amplitude history.
+- Added stationary and positive weight-drift benchmark targets; the latter remains inside the epoch-separated cone while leaving a fractional stationary-cone gap of `0.155119`.
+- Added machine-readable cross-epoch benchmark output and the corresponding diagnostic figure.
+- Extended the reproducibility verifier, frozen analysis contract, documentation, and SHA-256 manifest to cover the new benchmark.
+- Preserved the synthetic response-space scope: this release does not ingest observational data, run a Boltzmann solver, evaluate a survey likelihood, or provide a forecast.
+
 ## 1.2.1 — 2026-09-05
 
 - Corrected reproducibility metadata to distinguish the 321-point logarithmic mass grid from the exact reference mass, for 322 distinct templates.

@@ -22,8 +22,9 @@ The calculation has five layers:
 3. a fixed survey-inspired response-space benchmark with three redshift slices,
    logarithmic scale bins, a non-diagonal window matrix, correlated covariance,
    five nuisance columns spanning three smooth nuisance families, and a
-   finite-grid positive spectral cone with stored dual certificates and a
-   four-level mesh-convergence audit;
+   finite-grid positive spectral cone with stored dual certificates, a
+   four-level mesh-convergence audit, and nested stationary versus
+   epoch-separated cones testing cross-epoch spectral transport;
 4. a controlled synthetic injection--recovery layer with independent
    calibration and evaluation ensembles, a fixed dual-cone witness, and a
    predeclared window-mismatch stress test; and
@@ -78,6 +79,7 @@ These commands regenerate:
 
 - `benchmark_identifiability.csv`
 - `cone_grid_convergence.csv`
+- `cross_epoch_transport_benchmark.csv`
 - `finite_residue_5d_spectrum.csv`
 - `finite_residue_5d_benchmark.json`
 - `survey_projected_benchmark.csv`
@@ -93,6 +95,7 @@ These commands regenerate:
 - `figs/figS2_conditional_information_requirement.png`
 - `figs/figS3_injection_recovery.png`
 - `figs/figS4_finite_residue_5d_benchmark.png`
+- `figs/figS5_cross_epoch_transport.png`
 
 The benchmark script stops if the window rows are not normalized, if the covariance is
 not positive definite, or if a declared spectral inequality is violated
@@ -279,12 +282,11 @@ to verify the frozen source, results, and figures. Rendering hashes can change
 with the Matplotlib or font-stack version; the JSON and CSV files are the
 machine-readable scientific outputs.
 
-The release target corresponding to the revised manuscript is
-[`v1.2.1`](https://github.com/castronuovo/projected-geometric-closure/releases/tag/v1.2.1).
-It was published on 5 September 2026 and is the frozen reproducibility package
-supporting the associated manuscript.
-The earlier `v1.0.0` and `v1.1.0` tags remain immutable and are not
-overwritten.
+The frozen package supporting the revised manuscript is release
+[`v1.3.0`](https://github.com/castronuovo/projected-geometric-closure/releases/tag/v1.3.0),
+published on 6 September 2026. It includes the cross-epoch nested-cone
+transport benchmark and its machine-readable output and figure. Earlier tags,
+including `v1.2.1`, remain immutable and are not overwritten.
 
 ## License
 

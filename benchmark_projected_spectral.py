@@ -24,9 +24,11 @@ FIG_IDENTIFIABILITY = ROOT / "figs" / "fig2_identifiability_benchmark.png"
 FIG_FINITE_SCALE = ROOT / "figs" / "figS1_finite_scale_spectral_diagnostics.png"
 FIG_FLOW = ROOT / "figs" / "fig0_conceptual_flow.png"
 FIG_SURVEY = ROOT / "figs" / "fig3_survey_projected_spectral_benchmark.png"
+FIG_TRANSPORT = ROOT / "figs" / "figS5_cross_epoch_transport.png"
 CSV = ROOT / "benchmark_identifiability.csv"
 SURVEY_CSV = ROOT / "survey_projected_benchmark.csv"
 GRID_CONVERGENCE_CSV = ROOT / "cone_grid_convergence.csv"
+TRANSPORT_CSV = ROOT / "cross_epoch_transport_benchmark.csv"
 SURVEY_JSON = ROOT / "survey_projected_benchmark.json"
 VALIDATION_TOLERANCE = 5.0e-12
 
@@ -990,6 +992,27 @@ outside_signal = np.einsum(
     optimize=False,
 )
 
+# Positive at every epoch but deliberately incompatible with one stationary
+# normalized spectrum: the relative weight moves from the light to the heavy
+# atom while the declared common amplitude law is retained.
+drifting_weight_rows = np.asarray(
+    [[0.75, 0.25], [0.50, 0.50], [0.25, 0.75]]
+)
+drifting_slices = []
+for redshift, epoch_weights in zip(redshifts, drifting_weight_rows):
+    drifting_slices.append(
+        protected_response(
+            k_bins,
+            np.asarray([redshift]),
+            two_masses,
+            epoch_weights,
+            0.040,
+        )
+    )
+drifting_signal = np.einsum(
+    "ij,j->i", survey_window, np.concatenate(drifting_slices), optimize=False
+)
+
 mass_bank = np.unique(
     np.concatenate([np.geomspace(0.10, 0.80, 321), single_mass])
 )
@@ -1247,6 +1270,67 @@ if signed_cone_result["dual_minimum_generator_product"] < -1.0e-10:
 if signed_cone_result["dual_witness_data_product"] >= 0.0:
     raise RuntimeError("The stored cone witness does not separate the signed target.")
 
+# Nested cross-epoch cones.  The stationary design uses one coefficient per
+# mass across all epochs.  The epoch-separated design gives every epoch its
+# own positive coefficients before applying the same global nuisance
+# projection.  Hence K_stat is a subcone of K_epoch and q_stat-q_epoch >= 0.
+epoch_raw_columns = []
+for epoch_index, redshift in enumerate(redshifts):
+    for cone_mass in cone_mass_bank:
+        raw_column = np.zeros(n_data)
+        begin = epoch_index * n_scale
+        end = begin + n_scale
+        raw_column[begin:end] = protected_response(
+            k_bins,
+            np.asarray([redshift]),
+            np.asarray([cone_mass]),
+            np.asarray([1.0]),
+            1.0,
+        )
+        observed_column = np.einsum(
+            "ij,j->i", survey_window, raw_column, optimize=False
+        )
+        whitened_column = whiten(observed_column, covariance_cholesky)
+        epoch_raw_columns.append(
+            whitened_column
+            - nuisance_orthobasis @ (nuisance_orthobasis.T @ whitened_column)
+        )
+epoch_cone_design = np.column_stack(epoch_raw_columns)
+
+transport_scenarios = {
+    "stationary_two_mode": two_mode_signal,
+    "positive_weight_drift": drifting_signal,
+}
+transport_results = {}
+for scenario_name, scenario_signal in transport_scenarios.items():
+    transport_target = hardened_signal(scenario_signal)
+    _, stationary_residual, stationary_iterations = nonnegative_least_squares(
+        cone_design, transport_target
+    )
+    _, epoch_residual, epoch_iterations = nonnegative_least_squares(
+        epoch_cone_design, transport_target
+    )
+    target_norm_squared = float(transport_target @ transport_target)
+    q_stationary = float(stationary_residual @ stationary_residual)
+    q_epoch = float(epoch_residual @ epoch_residual)
+    delta_q = q_stationary - q_epoch
+    if delta_q < -1.0e-9:
+        raise RuntimeError("Nested-cone distance ordering was violated.")
+    transport_results[scenario_name] = {
+        "q_stationary": q_stationary,
+        "q_epoch_separated": q_epoch,
+        "delta_q_drift": max(0.0, delta_q),
+        "stationary_residual_fraction": q_stationary / target_norm_squared,
+        "epoch_separated_residual_fraction": q_epoch / target_norm_squared,
+        "delta_q_fraction": max(0.0, delta_q) / target_norm_squared,
+        "stationary_iterations": int(stationary_iterations),
+        "epoch_separated_iterations": int(epoch_iterations),
+    }
+if transport_results["stationary_two_mode"]["delta_q_fraction"] > 1.0e-9:
+    raise RuntimeError("Stationary target failed the cross-epoch null test.")
+if transport_results["positive_weight_drift"]["delta_q_fraction"] <= 1.0e-3:
+    raise RuntimeError("Positive spectral drift was not resolved by the benchmark.")
+
 # Mesh-convergence audit.  These logarithmic grids deliberately do not add the
 # injected support points: convergence must follow from mesh refinement rather
 # than exact interpolation of the targets.  The covering radius is measured in
@@ -1337,6 +1421,12 @@ metadata = {
             "results": cone_results,
             "mesh_convergence": cone_grid_convergence,
         },
+        "cross_epoch_transport": {
+            "stationary_cone_columns": int(cone_design.shape[1]),
+            "epoch_separated_cone_columns": int(epoch_cone_design.shape[1]),
+            "drifting_weights": drifting_weight_rows.tolist(),
+            "results": transport_results,
+        },
     },
     "results": survey_results,
 }
@@ -1380,6 +1470,26 @@ with GRID_CONVERGENCE_CSV.open("w", newline="", encoding="utf-8") as output_file
     writer = csv.DictWriter(output_file, fieldnames=fieldnames)
     writer.writeheader()
     writer.writerows(cone_grid_convergence)
+
+with TRANSPORT_CSV.open("w", newline="", encoding="utf-8") as output_file:
+    writer = csv.writer(output_file)
+    writer.writerow(
+        [
+            "scenario",
+            "q_stationary",
+            "q_epoch_separated",
+            "delta_q_drift",
+            "stationary_residual_fraction",
+            "epoch_separated_residual_fraction",
+            "delta_q_fraction",
+        ]
+    )
+    for scenario_name, result in transport_results.items():
+        writer.writerow([scenario_name] + [result[key] for key in (
+            "q_stationary", "q_epoch_separated", "delta_q_drift",
+            "stationary_residual_fraction", "epoch_separated_residual_fraction",
+            "delta_q_fraction",
+        )])
 
 survey_figure, survey_axes = plt.subplots(2, 2, figsize=(7.1, 5.25))
 image_window = survey_axes[0, 0].imshow(
@@ -1488,3 +1598,56 @@ for panel_axis, panel_label in zip(
 
 survey_figure.tight_layout()
 survey_figure.savefig(FIG_SURVEY, dpi=300, bbox_inches="tight")
+
+transport_figure, transport_axes = plt.subplots(1, 2, figsize=(7.1, 2.75))
+for mode_index, (label, color) in enumerate(
+    (("light atom", "#1f4e79"), ("heavy atom", "#c55a11"))
+):
+    transport_axes[0].plot(
+        redshifts,
+        drifting_weight_rows[:, mode_index],
+        marker="o",
+        linewidth=1.8,
+        color=color,
+        label=label,
+    )
+transport_axes[0].set_xlabel("redshift")
+transport_axes[0].set_ylabel("normalized spectral weight")
+transport_axes[0].set_ylim(0.0, 1.0)
+transport_axes[0].set_title("Positive epoch-dependent injection")
+transport_axes[0].legend(frameon=False)
+
+transport_names = ("stationary_two_mode", "positive_weight_drift")
+transport_labels = ("stationary\ntwo-mode", "positive\nweight drift")
+transport_fractions = [
+    transport_results[name]["delta_q_fraction"] for name in transport_names
+]
+transport_display = [max(value, 1.0e-7) for value in transport_fractions]
+transport_bars = transport_axes[1].bar(
+    transport_labels,
+    transport_display,
+    color=("#1f4e79", "#c55a11"),
+    alpha=0.88,
+)
+transport_axes[1].set_yscale("log")
+transport_axes[1].set_ylim(1.0e-7, 1.0)
+transport_axes[1].set_ylabel(r"$(q_{\rm stat}-q_{\rm epoch})/\|y\|^2$")
+transport_axes[1].set_title("Nested-cone transport gap")
+transport_axes[1].grid(axis="y", alpha=0.2)
+for bar, value in zip(transport_bars, transport_fractions):
+    label = "numerical zero" if value < 1.0e-9 else f"{value:.3f}"
+    transport_axes[1].text(
+        bar.get_x() + bar.get_width() / 2,
+        bar.get_height() * 1.25,
+        label,
+        ha="center",
+        va="bottom",
+        fontsize=7.2,
+    )
+for axis, panel_label in zip(transport_axes, ("a", "b")):
+    axis.text(
+        0.03, 0.95, f"({panel_label})", transform=axis.transAxes,
+        va="top", ha="left", fontweight="bold"
+    )
+transport_figure.tight_layout()
+transport_figure.savefig(FIG_TRANSPORT, dpi=300, bbox_inches="tight")

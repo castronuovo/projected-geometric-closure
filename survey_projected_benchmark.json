@@ -84,6 +84,46 @@
   },
   "validation": {
     "covariance_minimum_eigenvalue": 1.1987176549089959e-05,
+    "cross_epoch_transport": {
+      "drifting_weights": [
+        [
+          0.75,
+          0.25
+        ],
+        [
+          0.5,
+          0.5
+        ],
+        [
+          0.25,
+          0.75
+        ]
+      ],
+      "epoch_separated_cone_columns": 969,
+      "results": {
+        "positive_weight_drift": {
+          "delta_q_drift": 0.05163484197160786,
+          "delta_q_fraction": 0.15511853169132428,
+          "epoch_separated_iterations": 58,
+          "epoch_separated_residual_fraction": 4.03830611235433e-13,
+          "q_epoch_separated": 1.3442449181979733e-13,
+          "q_stationary": 0.051634841971742285,
+          "stationary_iterations": 4,
+          "stationary_residual_fraction": 0.15511853169172812
+        },
+        "stationary_two_mode": {
+          "delta_q_drift": 0.0,
+          "delta_q_fraction": 0.0,
+          "epoch_separated_iterations": 49,
+          "epoch_separated_residual_fraction": 1.2946546964847579e-12,
+          "q_epoch_separated": 6.329185088322926e-14,
+          "q_stationary": 2.4787618470870936e-14,
+          "stationary_iterations": 11,
+          "stationary_residual_fraction": 5.07038524235808e-13
+        }
+      },
+      "stationary_cone_columns": 323
+    },
     "normalized_spectral_diagnostics": {
       "fixed_physical_spectrum_transport": {
         "maximum_absolute_residual": 0.0,
