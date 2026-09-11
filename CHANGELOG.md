@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.4.0 — 2026-09-11
+
+- Implemented a fixed-background growth integration with temporal spectral weights applied before causal propagation, and a tangent map to the fractional matter-power response.
+- Added a uniform power-response remainder and a conservative distance bound for the amplitude-restricted stationary class on a two-mass dictionary. Stored both informative and inconclusive amplitude regimes.
+- Extended the stationary comparison to arbitrary positive mass support with continuum-grid and unresolved-tail allowances, and verified that the controlled small-amplitude separation survives a smooth weight transition.
+- Added an adversarial stationary-shape fit with independent amplitudes in two source intervals. The resulting residual is below the applicable uniform error allowance, so this broader comparison is explicitly reported as inconclusive.
+- Added exact-versus-tangent checks, source-aligned RK4 step halving, nested-cone and NNLS KKT checks, CSV/JSON outputs, and the causal-growth figure.
+- Included both transport CSV files in the numerical verifier and frozen CI outputs, and added CFF validation.
+- Corrected `cff-version` to the metadata schema version `1.2.0` and advanced the software package version to `1.4.0`.
+- The new calculation is an illustrative matter-power benchmark, not a survey forecast or a validated tracer/lensing pipeline.
+
 ## 1.3.0 — 2026-09-06
 
 - Added a nested-cone cross-epoch transport diagnostic that separates a shared stationary positive spectrum from independently positive epoch responses under a fixed amplitude history.

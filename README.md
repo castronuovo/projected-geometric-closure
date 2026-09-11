@@ -6,7 +6,11 @@ Benchmark, Single-Pole Stability, and Observable Spectral Complexity*.
 
 Repository: <https://github.com/castronuovo/projected-geometric-closure>
 
-The calculation has five layers:
+Release status: version **v1.4.0** adds the causal matter-power extension to
+the archived response-space package, including the growth and robustness
+scripts, machine-readable outputs, and causal diagnostic figure.
+
+The original calculation has five layers:
 
 1. an exactly soluble local five-dimensional scalar interval benchmark that
    validates the generalized Robin spectrum, positive boundary residues,
@@ -44,13 +48,56 @@ named survey observable, evaluate a likelihood, or provide a survey forecast.
 The single-mode fit profiles a non-negative amplitude over a 321-point logarithmic grid plus the exact single-target mass (322 distinct templates) in
 `0.100--0.800 h Mpc^-1`, within the inherited quasi-static benchmark range.
 
-## Environment
+## Causal matter-power extension
+
+Run `python causal_growth_transport.py` to reproduce
+`causal_growth_transport_benchmark.csv`,
+`causal_growth_transport_summary.json`, and
+`figs/figS6_causal_growth_transport.png`.
+
+This additional example integrates the linear-density growth equation on a
+fixed flat matter–Lambda background and computes `P_m/P_m_GR - 1` with
+identical matched initial data. Two non-negative temporal source blocks act
+**before** growth propagation. A two-mass target produces nested
+stationary and independent-history tangent cones; one scale-independent
+amplitude nuisance is removed per output epoch. The covariance and window
+are synthetic. The script does not compute Kaiser multipoles or lensing.
+
+A uniform Neumann remainder controls the transformation from growth to
+power for a declared bound on total response amplitude. Distance to the
+unbounded stationary tangent cone, minus that error allowance, lower-bounds
+distance to the fully integrated amplitude-restricted stationary class.
+At amplitude `0.0003` the margin is positive; at `0.003` the conservative
+bound is inconclusive. These are approximation diagnostics, not detection
+significances.
+
+Run `python causal_transport_support_audit.py` to extend the stationary
+comparison to arbitrary positive mass support, including a continuum, with
+explicit grid and unresolved-tail allowances. For amplitude `0.0003`, the
+certified lower margin is `0.00062252` for the step target and `0.000573451`
+for a smooth weight transition.
+
+Run `python causal_transport_free_amplitude.py` for the adversarial comparison
+in which one stationary normalized spectrum has a separate non-negative total
+amplitude in each source interval. This freedom reduces the tangent residual
+to `0.000382366`; the applicable uniform error allowance is `0.000406502`.
+The comparison is therefore inconclusive. It does not establish compatibility
+or robust discrimination with a free amplitude history.
+The JSON records the complete contract and all scan points.
+
+Validation includes source-aligned fourth-order Runge–Kutta step halving,
+stationary tangent recovery, independent-history recovery, cone inclusion,
+NNLS KKT conditions, and comparison of actual errors with the analytic bound.
+Floating-point convergence is not interval-arithmetic certification.
+
+## Environment and execution
 
 The stored output was generated with:
 
 - Python 3.9.6
-- NumPy 2.0.2
+- NumPy 1.26.4
 - Matplotlib 3.9.4
+- SciPy 1.13.1 (robustness audits only)
 
 Install the recorded dependencies with:
 
@@ -67,6 +114,9 @@ python3 benchmark_projected_spectral.py
 python3 finite_residue_5d_benchmark.py
 python3 injection_recovery.py
 python3 conditional_information_requirement.py
+python3 causal_growth_transport.py
+python3 causal_transport_support_audit.py
+python3 causal_transport_free_amplitude.py
 ```
 
 Optional thresholds can be supplied explicitly, for example:
@@ -87,6 +137,10 @@ These commands regenerate:
 - `conditional_information_requirement.csv`
 - `injection_recovery_summary.csv`
 - `injection_recovery_summary.json`
+- `causal_growth_transport_benchmark.csv`
+- `causal_growth_transport_summary.json`
+- `causal_transport_support_results.json`
+- `causal_transport_free_amplitude_results.json`
 - `figs/fig0_conceptual_flow.png`
 - `figs/fig1_geometric_spectral_test.png`
 - `figs/fig2_identifiability_benchmark.png`
@@ -96,6 +150,7 @@ These commands regenerate:
 - `figs/figS3_injection_recovery.png`
 - `figs/figS4_finite_residue_5d_benchmark.png`
 - `figs/figS5_cross_epoch_transport.png`
+- `figs/figS6_causal_growth_transport.png`
 
 The benchmark script stops if the window rows are not normalized, if the covariance is
 not positive definite, or if a declared spectral inequality is violated
@@ -103,8 +158,8 @@ beyond the recorded numerical tolerance. The JSON records the fixed analysis
 contract, the minimum covariance eigenvalue, the nuisance rank, the
 profiled-information eigenvalues, the single-mode residuals, and
 machine-readable validation of the normalized spectral identities and
-approximation bounds, Loewner matrices, spectral transport, and positive-cone
-separation and finite-grid convergence.
+approximation bounds, Loewner matrices, spectral transport, positive-cone
+separation, finite-grid convergence, and the causal-growth tangent remainder.
 
 The dedicated five-dimensional benchmark independently records the exact
 light mass and residue, the critical heavy gap, the finite-residue sum-rule
@@ -282,11 +337,12 @@ to verify the frozen source, results, and figures. Rendering hashes can change
 with the Matplotlib or font-stack version; the JSON and CSV files are the
 machine-readable scientific outputs.
 
-The frozen package supporting the revised manuscript is release
-[`v1.3.0`](https://github.com/castronuovo/projected-geometric-closure/releases/tag/v1.3.0),
-published on 6 September 2026. It includes the cross-epoch nested-cone
-transport benchmark and its machine-readable output and figure. Earlier tags,
-including `v1.2.1`, remain immutable and are not overwritten.
+The current frozen package is release
+[`v1.4.0`](https://github.com/castronuovo/projected-geometric-closure/releases/tag/v1.4.0),
+published on 11 September 2026. It includes the causal matter-power extension,
+the cross-epoch nested-cone transport benchmark, and their machine-readable
+outputs and figures. Earlier tags, including `v1.3.0`, remain immutable and
+are not overwritten.
 
 ## License
 

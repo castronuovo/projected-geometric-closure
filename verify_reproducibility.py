@@ -16,6 +16,9 @@ NUMERICAL_ZERO_TOLERANCE = 1.0e-10
 NUMERICAL_ZERO_DIAGNOSTICS = (
     "minimum_generator_product",
     "nuisance_projection_maximum_absolute_residual",
+    "generator_step_halving_error",
+    "nesting_max_absolute_error",
+    "rk4_step_halving_error",
 )
 CSV_FILES = (
     "benchmark_identifiability.csv",
@@ -24,11 +27,16 @@ CSV_FILES = (
     "survey_projected_benchmark.csv",
     "conditional_information_requirement.csv",
     "injection_recovery_summary.csv",
+    "cross_epoch_transport_benchmark.csv",
+    "causal_growth_transport_benchmark.csv",
 )
 JSON_FILES = (
     "finite_residue_5d_benchmark.json",
     "survey_projected_benchmark.json",
     "injection_recovery_summary.json",
+    "causal_growth_transport_summary.json",
+    "causal_transport_support_results.json",
+    "causal_transport_free_amplitude_results.json",
 )
 FILES = CSV_FILES + JSON_FILES
 
@@ -75,6 +83,12 @@ def compare_csv(reference_path: Path, regenerated_path: Path) -> None:
                         f"{row_index}:{column_index}"
                     )
             else:
+                diagnostic = reference_rows[0][column_index-1]
+                if diagnostic in NUMERICAL_ZERO_DIAGNOSTICS and (
+                    abs(reference_number) <= NUMERICAL_ZERO_TOLERANCE
+                    and abs(regenerated_number) <= NUMERICAL_ZERO_TOLERANCE
+                ):
+                    continue
                 if not close(reference_number, regenerated_number):
                     raise AssertionError(
                         f"CSV numerical mismatch: {regenerated_path.name}:"

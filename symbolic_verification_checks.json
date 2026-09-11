@@ -1,0 +1,61 @@
+{
+  "date": "2026-09-07",
+  "service": "Wolfram|Alpha LLM API",
+  "credential_recorded": false,
+  "checks": [
+    {
+      "query": "simplify 1/(1-r)-1-r assuming 0<r<1",
+      "response": "Query:\n\"simplify 1/(1-r)-1-r assuming 0<r<1\"\n\nAssumptions:\n\n\n\n\nInput interpretation:\nsimplify | 1/(1 - r) - 1 - r | assuming 0<r<1\n\nResult:\nr^2/(1 - r)\n\nRoot:\nr = 0\n\nPlot:\nimage: https://public6.wolframalpha.com/files/PNG_g4t3jjorl4.png\nWolfram Language code: Plot[{r^2/(1 - r), r}, {r, -1., 1.}]\n\nParametric plot:\nimage: https://public6.wolframalpha.com/files/PNG_g4tc88u55o.png\nWolfram Language code: ParametricPlot[{r^2/(1 - r), r}, {r, -1.002, 1.002}]\n\nWolfram|Alpha website result for \"simplify 1/(1-r)-1-r assuming 0<r<1\":\nhttps://www.wolframalpha.com/input?i=simplify+1%2F%281-r%29-1-r+assuming+0%3Cr%3C1",
+      "accepted_as_check": true,
+      "note": "Algebraic check only; operator assumptions require a separate derivation."
+    },
+    {
+      "query": "integrate 2*(1-exp(-x/2)) from x=0 to x=T",
+      "response": "Query:\n\"integrate 2*(1-exp(-x/2)) from x=0 to x=T\"\n\nDefinite integral:\nintegral_0^T 2 (1 - exp(-x/2)) dx = 2 T + 4 e^(-T/2) - 4\n\nSeries expansion of the integral at T = 0:\nT^2/2 - T^3/12 + T^4/96 - T^5/960 + T^6/11520 + O(T^7)\n(Taylor series)\n\nIndefinite integral:\nintegral2 (1 - exp(-x/2)) dx = 2 x + 4 e^(-x/2) + constant\n\nWolfram|Alpha website result for \"integrate 2*(1-exp(-x/2)) from x=0 to x=T\":\nhttps://www.wolframalpha.com/input?i=integrate+2%2A%281-exp%28-x%2F2%29%29+from+x%3D0+to+x%3DT",
+      "accepted_as_check": true,
+      "note": "Algebraic check only; operator assumptions require a separate derivation."
+    },
+    {
+      "query": "limit k^2/(k^2+a^2*m^2) as a approaches 0 assuming k>0 and m>0",
+      "response": "Query:\n\"limit k^2/(k^2+a^2*m^2) as a approaches 0 assuming k>0 and m>0\"\n\nInput:\n{(lim_(a->0) k^2/(k^2 + a^2 m^2)) k>0, m>0}\n\nInequality plot:\nimage: https://public6.wolframalpha.com/files/PNG_g4wekgqcjn.png\nWolfram Language code: RegionPlot[k > 0 && m > 0, {k, -1, 1}, {m, -1, 1}]\n\nSolution:\nk>0, m>0\n\nInterval notation:\n(0, \u221e)\n\n(0, \u221e)\n\nWolfram|Alpha website result for \"limit k^2/(k^2+a^2*m^2) as a approaches 0 assuming k>0 and m>0\":\nhttps://www.wolframalpha.com/input?i=limit+k%5E2%2F%28k%5E2%2Ba%5E2%2Am%5E2%29+as+a+approaches+0+assuming+k%3E0+and+m%3E0",
+      "accepted_as_check": false,
+      "note": "Ambiguous interpretation; not accepted. Replaced by the later limit query."
+    },
+    {
+      "query": "limit k^2/(k^2+a^2*m^2) as a->0",
+      "response": "Query:\n\"limit k^2/(k^2+a^2*m^2) as a->0\"\n\nLimit:\nlim_(a->0) k^2/(k^2 + a^2 m^2) = 1\n\nSeries expansion at a = 0:\n1 - (a^2 m^2)/k^2 + (a^4 m^4)/k^4 + O(a^6)\n(Taylor series)\n\nWolfram|Alpha website result for \"limit k^2/(k^2+a^2*m^2) as a->0\":\nhttps://www.wolframalpha.com/input?i=limit+k%5E2%2F%28k%5E2%2Ba%5E2%2Am%5E2%29+as+a-%3E0",
+      "accepted_as_check": true,
+      "note": "Algebraic check only; operator assumptions require a separate derivation."
+    },
+    {
+      "query": "expand (1+u+v)^2-1-2*u",
+      "response": "Query:\n\"expand (1+u+v)^2-1-2*u\"\n\nInput interpretation:\nexpand | (1 + u + v)^2 - 1 - 2 u\n\nResult:\nu^2 + 2 u v + v^2 + 2 v\n\nGeometric figure:\nparabolic cylinder\n\n3D plot:\nimage: https://public5c.wolframalpha.com/files/PNG_ga5oy5z270.png\nWolfram Language code: Plot3D[u^2 + 2 u v + v (2 + v), {u, -2., 2.}, {v, -2., 2.}]\n\nContour plot:\nimage: https://public5c.wolframalpha.com/files/PNG_ga5vdc0ylf.png\nWolfram Language code: ContourPlot[u^2 + 2 u v + v (2 + v), {u, -1.9862856758728236, 1.9862856758728236}, {v, -1.9862856758728236, 1.9862856758728236}]\n\nDefinite integral over a square of edge length 2 L:\nintegral_(-L)^L integral_(-L)^L (u^2 + 2 v + 2 u v + v^2) dv du = (8 L^4)/3\n\nWolfram|Alpha website result for \"expand (1+u+v)^2-1-2*u\":\nhttps://www.wolframalpha.com/input?i=expand+%281%2Bu%2Bv%29%5E2-1-2%2Au",
+      "accepted_as_check": true,
+      "note": "Algebraic check only; operator assumptions require a separate derivation."
+    },
+    {
+      "query": "simplify 3/2*(2*log(4)-4*(1-exp(-log(4)/2)))",
+      "response": "Query:\n\"simplify 3/2*(2*log(4)-4*(1-exp(-log(4)/2)))\"\n\nAssumption:\nAssuming \"log\" is the natural logarithm\nTo use as the base 10 logarithm set assumption=*FunClash.log-_*Log10-\n\nInput interpretation:\nsimplify | 3/2 (2 log(4) - 4 (1 - exp(-log(4)/2)))\n\nResults:\nlog(64) - 3\n\n3 (log(4) - 1)\n\n3 (2 log(2) - 1)\n\nExpanded logarithmic form:\n-3 + 6 log(2)\n\nReduced logarithmic form:\n3/2 (log(16) - 2)\n\nQuotient and Remainder:\n3 (2 log(4) - 2) = 1 \u00d7 2 + (3 (2 log(4) - 2) - 2)\n\nDecimal approximation:\n1.1588830833596718565033927287490594084530008061615315247240800569...\n\nProperty:\n3/2 (-2 + 2 log(4)) is a transcendental number\n\nExpanded form:\n3 log(4) - 3\n\nWolfram|Alpha website result for \"simplify 3/2*(2*log(4)-4*(1-exp(-log(4)/2)))\":\nhttps://www.wolframalpha.com/input?i=simplify+3%2F2%2A%282%2Alog%284%29-4%2A%281-exp%28-log%284%29%2F2%29%29%29",
+      "accepted_as_check": true,
+      "note": "Algebraic check only; operator assumptions require a separate derivation."
+    },
+    {
+      "query": "simplify 1-(1-x)/(1+x)",
+      "response": "2 x/(1+x)",
+      "accepted_as_check": true,
+      "note": "Checks the PPN-ratio algebra used in the conditional local gate."
+    },
+    {
+      "query": "solve 2*x/(1+x)<=d for x assuming x>=0 and 0<d<2",
+      "response": "0<=x<=d/(2-d)",
+      "accepted_as_check": true,
+      "note": "Checks the conditional Cassini inequality."
+    },
+    {
+      "query": "N[6.7*10^-5/(2-6.7*10^-5),12]",
+      "response": "0.0000335011",
+      "accepted_as_check": true,
+      "note": "Checks the numerical value quoted for the conservative Cassini envelope |central value| + 2 standard deviations."
+    }
+  ]
+}

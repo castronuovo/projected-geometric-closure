@@ -1,0 +1,143 @@
+{
+  "status": "Exploratory finite-grid adversarial test; no significance or global-optimum certificate",
+  "competitor": "one nonnegative spectral shape shared across two source intervals, with two independent nonnegative total amplitudes",
+  "grid_mass_h_Mpc": [
+    0.0001,
+    100.0
+  ],
+  "grid_size": 1026,
+  "starts": 32,
+  "numpy": "1.26.4",
+  "rows": [
+    {
+      "amplitude": 0.0003,
+      "stationary_shape_free_amplitude_tangent_residual": 0.00038236604695031145,
+      "residual_against_exact_target": 0.0003824805320748605,
+      "fitted_response_cap": 0.0003208158804441748,
+      "uniform_error_allowance_at_fitted_cap": 0.00040650245015927714,
+      "exclusion_certified": false,
+      "unrestricted_epoch_cone_tangent_residual": 3.383340845558776e-08,
+      "fitted_epoch_amplitudes": [
+        0.0003208158804441748,
+        0.00019065642399395029
+      ],
+      "active_mass_count": 3,
+      "active_mass_range_h_Mpc": [
+        0.1084316958237171,
+        0.6435669750977286
+      ],
+      "best_residual_spread": [
+        0.000386499439760932,
+        0.007326988142165314
+      ],
+      "profiled_amplitude_ratio": 0.5942861174140861,
+      "coarse_log_ratio_scan_minimum": 0.0004039693963640104,
+      "number_of_profile_minima": 1,
+      "agreement_with_best_alternating_fit": -4.133392810620534e-06
+    },
+    {
+      "amplitude": 0.001,
+      "stationary_shape_free_amplitude_tangent_residual": 0.0012745534898342462,
+      "residual_against_exact_target": 0.0012760062388753235,
+      "fitted_response_cap": 0.0010693862663082774,
+      "uniform_error_allowance_at_fitted_cap": 0.004521926160705281,
+      "exclusion_certified": false,
+      "unrestricted_epoch_cone_tangent_residual": 2.7750959142085917e-08,
+      "fitted_epoch_amplitudes": [
+        0.0010693862663082774,
+        0.0006355214171069093
+      ],
+      "active_mass_count": 3,
+      "active_mass_range_h_Mpc": [
+        0.1084316958237171,
+        0.6435669750977286
+      ],
+      "best_residual_spread": [
+        0.001288374602537484,
+        0.024427524719319606
+      ],
+      "profiled_amplitude_ratio": 0.5942861219836392,
+      "coarse_log_ratio_scan_minimum": 0.0013465646545465892,
+      "number_of_profile_minima": 1,
+      "agreement_with_best_alternating_fit": -1.3821112703237817e-05
+    },
+    {
+      "amplitude": 0.003,
+      "stationary_shape_free_amplitude_tangent_residual": 0.0038236604695028823,
+      "residual_against_exact_target": 0.003841367474681922,
+      "fitted_response_cap": 0.0032081588043916614,
+      "uniform_error_allowance_at_fitted_cap": 0.04083244529616525,
+      "exclusion_certified": false,
+      "unrestricted_epoch_cone_tangent_residual": 8.325287715979921e-08,
+      "fitted_epoch_amplitudes": [
+        0.0032081588043916614,
+        0.0019065642398379053
+      ],
+      "active_mass_count": 3,
+      "active_mass_range_h_Mpc": [
+        0.1084316958237171,
+        0.6435669750977286
+      ],
+      "best_residual_spread": [
+        0.0038651238076436918,
+        0.0732888685917811
+      ],
+      "profiled_amplitude_ratio": 0.5942861173916958,
+      "coarse_log_ratio_scan_minimum": 0.004039693963639863,
+      "number_of_profile_minima": 1,
+      "agreement_with_best_alternating_fit": -4.146333814080945e-05
+    },
+    {
+      "amplitude": 0.01,
+      "stationary_shape_free_amplitude_tangent_residual": 0.012745534898343248,
+      "residual_against_exact_target": 0.013119113667209666,
+      "fitted_response_cap": 0.01069386268141933,
+      "uniform_error_allowance_at_fitted_cap": 0.4590224451835303,
+      "exclusion_certified": false,
+      "unrestricted_epoch_cone_tangent_residual": 5.3360444288490196e-08,
+      "fitted_epoch_amplitudes": [
+        0.01069386268141933,
+        0.006355214132871907
+      ],
+      "active_mass_count": 3,
+      "active_mass_range_h_Mpc": [
+        0.1084316958237171,
+        0.6435669750977286
+      ],
+      "best_residual_spread": [
+        0.012883746025433768,
+        0.2443066324395436
+      ],
+      "profiled_amplitude_ratio": 0.5942861173927491,
+      "coarse_log_ratio_scan_minimum": 0.013465646545466602,
+      "number_of_profile_minima": 1,
+      "agreement_with_best_alternating_fit": -0.0001382111270905196
+    },
+    {
+      "amplitude": 0.03,
+      "stationary_shape_free_amplitude_tangent_residual": 0.0382366046950329,
+      "residual_against_exact_target": 0.04563916447331368,
+      "fitted_response_cap": 0.03208158798893323,
+      "uniform_error_allowance_at_fitted_cap": 4.27421669177652,
+      "exclusion_certified": false,
+      "unrestricted_epoch_cone_tangent_residual": 1.6008133049691224e-07,
+      "fitted_epoch_amplitudes": [
+        0.03208158798893323,
+        0.019065642513119013
+      ],
+      "active_mass_count": 3,
+      "active_mass_range_h_Mpc": [
+        0.1084316958237171,
+        0.6435669750977286
+      ],
+      "best_residual_spread": [
+        0.03865123807615629,
+        0.7329198973186333
+      ],
+      "profiled_amplitude_ratio": 0.5942861219867247,
+      "coarse_log_ratio_scan_minimum": 0.04039693963640295,
+      "number_of_profile_minima": 1,
+      "agreement_with_best_alternating_fit": -0.0004146333811233874
+    }
+  ]
+}
