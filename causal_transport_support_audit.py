@@ -18,6 +18,18 @@ original = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(original)
 
 
+def declared_mass_grid(points):
+    """Build the declared grid with platform-independent anchor insertion."""
+    masses = np.geomspace(.0001, 100., points)
+    for anchor in (.1, .4):
+        nearest = int(np.argmin(np.abs(np.log(masses/anchor))))
+        if np.isclose(masses[nearest], anchor, rtol=1e-13, atol=0.):
+            masses[nearest] = anchor
+        else:
+            masses = np.sort(np.r_[masses, anchor])
+    return masses
+
+
 def bank(masses, steps=2048):
     """Vectorized independent RK4 tangent propagation for stationary masses."""
     k = original.K[:, None]
@@ -75,7 +87,7 @@ def smooth_target(alpha, tolerance):
 
 def run():
     # Deliberately widen support before seeing the fit; retain all scan points.
-    masses = np.unique(np.r_[np.geomspace(.0001, 100., 8193), .1, .4])
+    masses = declared_mass_grid(8193)
     raw = bank(masses)
     coarse = bank(masses, 1024)
     nuisance = np.kron(np.eye(8), np.ones((12, 1)))

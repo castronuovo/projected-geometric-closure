@@ -19,6 +19,18 @@ original = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(original)
 
 
+def declared_mass_grid(points):
+    """Build the declared grid with platform-independent anchor insertion."""
+    masses = np.geomspace(.0001, 100., points)
+    for anchor in (.1, .4):
+        nearest = int(np.argmin(np.abs(np.log(masses/anchor))))
+        if np.isclose(masses[nearest], anchor, rtol=1e-13, atol=0.):
+            masses[nearest] = anchor
+        else:
+            masses = np.sort(np.r_[masses, anchor])
+    return masses
+
+
 def epoch_bank(masses, steps=2048):
     """Return projected tangent generators D[e][:,m] before whitening."""
     k = original.K[:, None]
@@ -109,7 +121,7 @@ def ratio_profile_fit(designs, target):
 def run():
     # Wide, predeclared grid plus the injected masses. End tails are nulled by
     # the per-output scale-independent nuisance and checked by enlargement.
-    masses = np.unique(np.r_[np.geomspace(.0001, 100., 1025), .1, .4])
+    masses = declared_mass_grid(1025)
     nuisance = np.kron(np.eye(8), np.ones((12, 1)))
     basis = np.linalg.qr(nuisance, mode="reduced")[0]
     designs = [original.project(x, basis) for x in epoch_bank(masses)]

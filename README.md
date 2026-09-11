@@ -6,9 +6,10 @@ Benchmark, Single-Pole Stability, and Observable Spectral Complexity*.
 
 Repository: <https://github.com/castronuovo/projected-geometric-closure>
 
-Release status: version **v1.4.0** adds the causal matter-power extension to
-the archived response-space package, including the growth and robustness
-scripts, machine-readable outputs, and causal diagnostic figure.
+Release status: version **v1.4.1** is the portable reproducibility patch for
+the causal matter-power extension introduced in v1.4.0. It fixes deterministic
+mass-grid construction and cross-platform validation without changing the
+model, analysis contract, qualitative conclusions, or manuscript claims.
 
 The original calculation has five layers:
 
@@ -338,10 +339,10 @@ with the Matplotlib or font-stack version; the JSON and CSV files are the
 machine-readable scientific outputs.
 
 The current frozen package is release
-[`v1.4.0`](https://github.com/castronuovo/projected-geometric-closure/releases/tag/v1.4.0),
+[`v1.4.1`](https://github.com/castronuovo/projected-geometric-closure/releases/tag/v1.4.1),
 published on 11 September 2026. It includes the causal matter-power extension,
 the cross-epoch nested-cone transport benchmark, and their machine-readable
-outputs and figures. Earlier tags, including `v1.3.0`, remain immutable and
+outputs and figures. Earlier tags, including `v1.4.0`, remain immutable and
 are not overwritten.
 
 ## License

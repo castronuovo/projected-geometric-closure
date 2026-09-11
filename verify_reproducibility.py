@@ -12,6 +12,8 @@ from pathlib import Path
 
 RELATIVE_TOLERANCE = 1.0e-11
 ABSOLUTE_TOLERANCE = 1.0e-14
+OPTIMIZATION_RELATIVE_TOLERANCE = 1.0e-8
+OPTIMIZATION_ABSOLUTE_TOLERANCE = 1.0e-12
 NUMERICAL_ZERO_TOLERANCE = 1.0e-10
 NUMERICAL_ZERO_DIAGNOSTICS = (
     "minimum_generator_product",
@@ -39,16 +41,22 @@ JSON_FILES = (
     "causal_transport_free_amplitude_results.json",
 )
 FILES = CSV_FILES + JSON_FILES
+PLATFORM_SENSITIVE_JSON_FILES = (
+    "causal_transport_support_results.json",
+    "causal_transport_free_amplitude_results.json",
+)
 
 
-def close(reference: float, regenerated: float) -> bool:
+def close(reference: float, regenerated: float, *, optimization: bool = False) -> bool:
     if math.isnan(reference) or math.isnan(regenerated):
         return math.isnan(reference) and math.isnan(regenerated)
     return math.isclose(
         reference,
         regenerated,
-        rel_tol=RELATIVE_TOLERANCE,
-        abs_tol=ABSOLUTE_TOLERANCE,
+        rel_tol=(OPTIMIZATION_RELATIVE_TOLERANCE if optimization
+                 else RELATIVE_TOLERANCE),
+        abs_tol=(OPTIMIZATION_ABSOLUTE_TOLERANCE if optimization
+                 else ABSOLUTE_TOLERANCE),
     )
 
 
@@ -96,12 +104,18 @@ def compare_csv(reference_path: Path, regenerated_path: Path) -> None:
                     )
 
 
-def compare_json(reference, regenerated, path: str = "root") -> None:
+def compare_json(reference, regenerated, path: str = "root", *, optimization=False) -> None:
     if isinstance(reference, bool) or reference is None or isinstance(reference, str):
         if reference != regenerated:
             raise AssertionError(f"JSON value mismatch at {path}")
         return
-    if isinstance(reference, (int, float)):
+    if isinstance(reference, int):
+        if not isinstance(regenerated, int) or isinstance(regenerated, bool):
+            raise AssertionError(f"JSON integer mismatch at {path}")
+        if reference != regenerated:
+            raise AssertionError(f"JSON integer mismatch at {path}")
+        return
+    if isinstance(reference, float):
         if not isinstance(regenerated, (int, float)) or isinstance(regenerated, bool):
             raise AssertionError(f"JSON type mismatch at {path}")
         if path.endswith(NUMERICAL_ZERO_DIAGNOSTICS):
@@ -110,7 +124,7 @@ def compare_json(reference, regenerated, path: str = "root") -> None:
                 and abs(float(regenerated)) <= NUMERICAL_ZERO_TOLERANCE
             ):
                 return
-        if not close(float(reference), float(regenerated)):
+        if not close(float(reference), float(regenerated), optimization=optimization):
             raise AssertionError(f"JSON numerical mismatch at {path}")
         return
     if isinstance(reference, list):
@@ -119,13 +133,15 @@ def compare_json(reference, regenerated, path: str = "root") -> None:
         for index, (reference_item, regenerated_item) in enumerate(
             zip(reference, regenerated)
         ):
-            compare_json(reference_item, regenerated_item, f"{path}[{index}]")
+            compare_json(reference_item, regenerated_item, f"{path}[{index}]",
+                         optimization=optimization)
         return
     if isinstance(reference, dict):
         if not isinstance(regenerated, dict) or reference.keys() != regenerated.keys():
             raise AssertionError(f"JSON object mismatch at {path}")
         for key in reference:
-            compare_json(reference[key], regenerated[key], f"{path}.{key}")
+            compare_json(reference[key], regenerated[key], f"{path}.{key}",
+                         optimization=optimization)
         return
     raise TypeError(f"Unsupported JSON value at {path}")
 
@@ -144,7 +160,11 @@ def main() -> None:
             reference_json = json.load(stream)
         with (regenerated_directory / json_filename).open(encoding="utf-8") as stream:
             regenerated_json = json.load(stream)
-        compare_json(reference_json, regenerated_json)
+        compare_json(
+            reference_json,
+            regenerated_json,
+            optimization=json_filename in PLATFORM_SENSITIVE_JSON_FILES,
+        )
     print("Scientific outputs agree within the declared numerical tolerances.")
 
 

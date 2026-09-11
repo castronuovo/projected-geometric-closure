@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.4.1 — 2026-09-11
+
+- Made the declared logarithmic mass grids platform-independent by replacing near-coincident anchor nodes rather than relying on bitwise deduplication.
+- Preserved exact comparison of integer metadata while applying explicit cross-platform tolerances only to the two SciPy optimization outputs introduced in v1.4.0.
+- This portability patch does not alter the model, analysis contract, qualitative conclusions, or manuscript claims.
+
 ## 1.4.0 — 2026-09-11
 
 - Implemented a fixed-background growth integration with temporal spectral weights applied before causal propagation, and a tangent map to the fractional matter-power response.
