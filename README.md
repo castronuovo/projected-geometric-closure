@@ -1,17 +1,36 @@
-# Projected geometric dark-sector closure
+# Spectral identifiability of a protected cosmological response
 
 This directory contains the reproducibility materials for
-*Projected Geometric Dark-Sector Closure: Five-Dimensional Boundary-Scalar
-Benchmark, Single-Pole Stability, and Observable Spectral Complexity*.
+*Spectral Identifiability of a Protected Cosmological Response:
+Conditional Exclusion and the Limits of a Two-Time Shadow*.
 
 Repository: <https://github.com/castronuovo/projected-geometric-closure>
 
-Release status: version **v1.4.1** is the portable reproducibility patch for
-the causal matter-power extension introduced in v1.4.0. It fixes deterministic
-mass-grid construction and cross-platform validation without changing the
-model, analysis contract, qualitative conclusions, or manuscript claims.
+Current public release: **v1.5.0**. The release tag fixes the source,
+machine-readable outputs, figures, pinned dependencies, and SHA-256 manifest
+for this reproducibility package. Earlier releases remain available.
 
-The original calculation has five layers:
+## Scientific architecture
+
+The package implements the Paper-III inference bridge in the companion
+program:
+
+1. Paper I defines the protected late-time single-pole kernel.
+2. Paper II supplies its observational entry and falsification gates.
+3. Paper III applies progressive exclusion to test compatibility with a
+   source-visible positive response class. Exact continuum agreement fixes its
+   cyclic minimal operator up to unitary equivalence; finite projected data
+   do not establish that exact identification.
+4. A separate two-time theory develops an explicit (4+2)-dimensional parent
+   realization of the surviving class.
+
+The claimed uniqueness is conditional on the predeclared rival bank and the
+retained observable contract. A theory reproducing the complete operator and
+cross-channel signature belongs to the same observable equivalence class; the
+package does not convert that equivalence into an unconditional proof of the
+parent ontology.
+
+The numerical and symbolic support has six layers:
 
 1. an exactly soluble local five-dimensional scalar interval benchmark that
    validates the generalized Robin spectrum, positive boundary residues,
@@ -35,11 +54,57 @@ The original calculation has five layers:
    predeclared window-mismatch stress test; and
 5. an executable conditional-information calculator that translates the
    structural residual fractions into the target norm required for a generic,
-   externally calibrated quadratic threshold.
+   externally calibrated quadratic threshold; and
+6. a finite-data duality construction showing that distinct positive spectral
+   measures can agree on the retained samples while differing as continuum
+   Stieltjes responses.
+
+## Two-time-parent inference scope
+
+The manuscript additionally derives an analytic result that does not require a
+numerical pipeline. Every single-field Einstein-frame potential admits an
+exact homogeneous two-scalar Weyl lift. The lift is therefore compatible with
+the inherited infrared kernel but is not identifiable from that kernel,
+mediator mass, or reduced potential alone. The associated matter-coupling
+analysis yields three distinct branches: universal screened coupling,
+species-dependent dark coupling, and locally constrained weak universal
+coupling. None is silently identified with the universal kernel.
+
+Independent Wolfram checks and the maintained Lean theorem remain in the
+author's local development workspace. The graphical-abstract source and
+generator are also kept with the manuscript assets, outside this package.
+The two legacy scripts under the manuscript's `script/` directory deliberately
+raise an obsolete-benchmark error and are not part of this package.
 
 The late-time scale and redshift coverage is DESI-like at the level of
 binning. No released DESI tracer selection, window, covariance, catalogue, or
 likelihood is used.
+
+That statement applies to the original synthetic benchmark. The separate
+`desi_dr1_tangent_test.py` development demonstrator now ingests official DESI
+DR1 LRG power-spectrum data vectors, windows, and covariance products. It is
+not used to replace or retrospectively reinterpret the frozen synthetic
+results.
+
+## Restricted DESI DR1 tangent demonstrator
+
+Run `python desi_dr1_tangent_test.py` to download the three official DESI DR1
+combined-footprint LRG power-spectrum likelihood containers, verify their
+project-recorded SHA-256 hashes, and regenerate
+`desi_dr1_tangent_summary.json`, `desi_dr1_tangent_scan.csv`, and
+`figs/figS7_desi_dr1_tangent_test.png`.
+
+The calculation uses a fixed-background CAMB linear spectrum, integrates the
+scale-dependent growth equation from matched data at `a=0.25`, propagates
+linear Kaiser multipoles through the released windows, and profiles five local
+nuisance directions per redshift bin. The nominal reference fits have
+chi-squared values `18.72`, `24.77`, and `27.55` for 27 nominal degrees of
+freedom. The score near `m_star = 0.03 h/Mpc` changes from `-1.69` to about
+`-2.47` across the predeclared `k_max = 0.08, 0.09, 0.10 h/Mpc` audit, and the
+unconstrained estimate lies outside the validated local tangent neighborhood.
+Consequently the stored output is an inapplicability diagnostic, not a
+detection, exclusion, posterior, or DESI Collaboration result. It does not
+test `Sigma = 1` because no lensing likelihood is included.
 
 The second layer compares a protected single mode, a positive two-mode
 mixture, and a signed response outside the positive-spectrum class. It is a
@@ -93,12 +158,19 @@ Floating-point convergence is not interval-arithmetic certification.
 
 ## Environment and execution
 
+The additional `rival_map_calibration_check.py` is a deterministic synthetic
+contract check for the ordered N/I/S/E/J decision rule. It compares a
+least-favorable composite-family cutoff with a prior-mixture cutoff and
+evaluates the former on independent draws. It does not use DESI data, test a
+physical rival family, or produce an observational exclusion.
+
 The stored output was generated with:
 
 - Python 3.9.6
 - NumPy 1.26.4
 - Matplotlib 3.9.4
 - SciPy 1.13.1 (robustness audits only)
+- h5py 3.12.1 and CAMB 1.6.0 (DESI tangent demonstrator only)
 
 Install the recorded dependencies with:
 
@@ -112,13 +184,36 @@ Run from this directory:
 
 ```bash
 python3 benchmark_projected_spectral.py
+python3 spectral_shadow_duality.py
 python3 finite_residue_5d_benchmark.py
 python3 injection_recovery.py
 python3 conditional_information_requirement.py
 python3 causal_growth_transport.py
 python3 causal_transport_support_audit.py
 python3 causal_transport_free_amplitude.py
+python3 desi_dr1_tangent_test.py
+python3 rival_map_calibration_check.py
 ```
+
+The DESI command downloads official released likelihood containers into a
+local cache and verifies their recorded hashes. These input files are not
+redistributed with this package.
+
+To compare a complete regenerated run with the frozen release outputs, copy
+the frozen CSV and JSON files to a separate directory before running the nine
+benchmark commands above, then run
+`python3 verify_reproducibility.py FROZEN_DIRECTORY`. The synthetic contract
+check is self-validating and has no frozen scientific output.
+The verifier covers all nine CSV and eight JSON scientific outputs, including
+the DESI diagnostic. Its DESI-specific tolerances are `3e-5` relative and
+`1e-6` absolute because profiled nuisance optima vary slightly across
+independent numerical runs; structural metadata and integer counts still
+match exactly. This comparison does not validate the linear Kaiser forward
+model against survey mocks or turn the DESI score into a constraint.
+The public GitHub workflow still regenerates the 14 inherited outputs. When
+given that exact legacy reference set, the verifier reports the partial scope
+explicitly. A complete v1.5.0 replay requires running the three additional
+scripts listed above and retaining all 17 frozen outputs before comparison.
 
 Optional thresholds can be supplied explicitly, for example:
 
@@ -129,6 +224,7 @@ python3 conditional_information_requirement.py --thresholds 1,4,9,16,25
 These commands regenerate:
 
 - `benchmark_identifiability.csv`
+- `spectral_shadow_duality.json`
 - `cone_grid_convergence.csv`
 - `cross_epoch_transport_benchmark.csv`
 - `finite_residue_5d_spectrum.csv`
@@ -142,16 +238,19 @@ These commands regenerate:
 - `causal_growth_transport_summary.json`
 - `causal_transport_support_results.json`
 - `causal_transport_free_amplitude_results.json`
-- `figs/fig0_conceptual_flow.png`
 - `figs/fig1_geometric_spectral_test.png`
 - `figs/fig2_identifiability_benchmark.png`
 - `figs/fig3_survey_projected_spectral_benchmark.png`
+- `figs/fig4_spectral_shadow_duality.png`
 - `figs/figS1_finite_scale_spectral_diagnostics.png`
 - `figs/figS2_conditional_information_requirement.png`
 - `figs/figS3_injection_recovery.png`
 - `figs/figS4_finite_residue_5d_benchmark.png`
 - `figs/figS5_cross_epoch_transport.png`
 - `figs/figS6_causal_growth_transport.png`
+- `desi_dr1_tangent_scan.csv`
+- `desi_dr1_tangent_summary.json`
+- `figs/figS7_desi_dr1_tangent_test.png`
 
 The benchmark script stops if the window rows are not normalized, if the covariance is
 not positive definite, or if a declared spectral inequality is violated
@@ -338,12 +437,13 @@ to verify the frozen source, results, and figures. Rendering hashes can change
 with the Matplotlib or font-stack version; the JSON and CSV files are the
 machine-readable scientific outputs.
 
-The current frozen package is release
+The current frozen public package is release
+[`v1.5.0`](https://github.com/castronuovo/projected-geometric-closure/releases/tag/v1.5.0),
+published on 29 September 2026. It adds the DESI tangent demonstrator,
+spectral-duality benchmark, rival-map calibration check, and their applicable
+machine-readable outputs. Earlier tags, including
 [`v1.4.1`](https://github.com/castronuovo/projected-geometric-closure/releases/tag/v1.4.1),
-published on 11 September 2026. It includes the causal matter-power extension,
-the cross-epoch nested-cone transport benchmark, and their machine-readable
-outputs and figures. Earlier tags, including `v1.4.0`, remain immutable and
-are not overwritten.
+remain immutable and are not overwritten.
 
 ## License
 

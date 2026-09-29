@@ -1,5 +1,42 @@
 # Changelog
 
+## 1.5.0 — 2026-09-29
+
+- Added a deterministic synthetic check for the ordered rival-family
+  exclusion map, composite-null tail calibration, and the distinction
+  between a least-favorable and a prior-mixture cutoff. This check makes no
+  observational claim and leaves all frozen scientific outputs unchanged.
+
+- Published the `v1.5.0` Python reproducibility package. Symbolic,
+  formal, and graphical-abstract development files remain outside this package.
+
+- Reoriented the package around the Paper-III inference bridge from the
+  protected single-pole response to a conditionally unique source-visible
+  operator class.
+- Updated the manuscript title and metadata to foreground spectral
+  identifiability and the limits of parent identification.
+- Added the finite-data spectral-shadow duality executable, its
+  machine-readable output, and the corresponding figure.
+- Extended local frozen-output verification to the new duality benchmark.
+  The existing public workflow retains its earlier core subset; the complete
+  v1.5.0 replay is documented for independent execution.
+
+- Added a restricted DESI DR1 LRG tangent demonstrator using the official
+  released data vectors, window matrices, and covariance products in three
+  redshift bins.
+- Added fixed-background CAMB power, scale-dependent growth propagation,
+  linear Kaiser multipoles, covariance whitening, and five profiled nuisance
+  directions per bin.
+- Added a predeclared `k_max = 0.08, 0.09, 0.10 h/Mpc` stability audit and
+  Gaussian tangent injection calibration. The observed score fails the stated
+  stability/locality requirements and is therefore recorded as inapplicable,
+  not as a detection or constraint.
+- Added project-recorded hashes for downloaded inputs and pinned h5py/CAMB
+  dependencies. The official DESI source files are not redistributed.
+- Included DESI CSV/JSON outputs in the numerical verifier and continuous
+  integration, with explicit tolerances for profiled nuisance optimization.
+  Removed cached DESI HDF5 inputs from the local code archive.
+
 ## 1.4.1 — 2026-09-11
 
 - Made the declared logarithmic mass grids platform-independent by replacing near-coincident anchor nodes rather than relying on bitwise deduplication.

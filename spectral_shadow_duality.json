@@ -1,0 +1,36 @@
+{
+  "support": [
+    0.1,
+    0.28,
+    0.75,
+    2.0,
+    5.4,
+    14.0
+  ],
+  "retained_u": [
+    0.16,
+    1.05,
+    7.0
+  ],
+  "weights_a": [
+    0.8124463516570828,
+    0.567046437792407,
+    0.5814775939432985,
+    0.2854490235754127,
+    0.18748315175244568,
+    0.3916
+  ],
+  "weights_b": [
+    0.7875536483429173,
+    0.672953562207593,
+    0.37852240605670145,
+    0.4345509764245873,
+    0.3725168482475544,
+    0.0484
+  ],
+  "finite_map_rank": 3,
+  "dense_fixed_support_rank": 6,
+  "finite_response_residual_l2": 2.482534153247273e-16,
+  "maximum_continuum_response_difference": 0.01279094233670719,
+  "interpretation": "Two distinct positive measures are exactly degenerate under the declared three-sample map but differ as continuous Stieltjes functions."
+}

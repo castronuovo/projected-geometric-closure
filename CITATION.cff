@@ -1,11 +1,11 @@
 cff-version: 1.2.0
 message: "If you use this benchmark, please cite the associated manuscript."
-title: "Reproducibility Package for Projected Geometric Dark-Sector Closure: Five-Dimensional Boundary-Scalar Benchmark, Single-Pole Stability, and Observable Spectral Complexity"
+title: "Reproducibility Package for Spectral Identifiability of a Protected Cosmological Response: Conditional Exclusion and the Limits of a Two-Time Shadow"
 type: software
 authors:
   - family-names: Castronuovo
     given-names: Vitantonio
     orcid: "https://orcid.org/0009-0003-0066-0738"
-version: 1.4.1
-date-released: 2026-09-11
+version: 1.5.0
+date-released: 2026-09-29
 repository-code: "https://github.com/castronuovo/projected-geometric-closure"
