@@ -17,10 +17,9 @@ time and are not redistributed.
 
 from __future__ import annotations
 
-import hashlib
 import json
 from pathlib import Path
-from urllib.request import urlretrieve
+from verified_download import download_verified, sha256
 
 import camb
 import h5py
@@ -74,22 +73,13 @@ def filename(tracer: str, zlo: float, zhi: float) -> str:
     )
 
 
-def sha256(path: Path) -> str:
-    digest = hashlib.sha256()
-    with path.open("rb") as stream:
-        for chunk in iter(lambda: stream.read(1024 * 1024), b""):
-            digest.update(chunk)
-    return digest.hexdigest()
-
-
 def fetch_inputs(cache: Path) -> list[Path]:
     cache.mkdir(parents=True, exist_ok=True)
     paths = []
     for tracer, zlo, zhi in TRACERS:
         name = filename(tracer, zlo, zhi)
         path = cache / name
-        if not path.exists():
-            urlretrieve(f"{BASE_URL}/{name}", path)
+        download_verified(f"{BASE_URL}/{name}", path, EXPECTED_SHA256[name])
         observed_hash = sha256(path)
         if observed_hash != EXPECTED_SHA256[name]:
             raise RuntimeError(

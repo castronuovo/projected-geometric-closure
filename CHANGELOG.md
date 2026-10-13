@@ -2,6 +2,11 @@
 
 ## Unreleased working-tree corrections
 
+- Fixed transient DESI connection failures with an explicit socket timeout,
+  bounded retries, verified atomic downloads, and hash-checked CI input cache.
+- Added eight network-failure regression tests. Scientific calculations,
+  expected input digests, and frozen numeric outputs are unchanged.
+
 - Corrected the documented status of the proposed two-time parent completion
   and distinguished exact-response uniqueness from rival-bank exclusion.
 - Extended the working-tree CI configuration to preserve all 17 frozen scientific

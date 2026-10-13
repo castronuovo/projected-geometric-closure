@@ -206,6 +206,17 @@ The DESI command downloads official released likelihood containers into a
 local cache and verifies their recorded hashes. These input files are not
 redistributed with this package.
 
+Downloads use a 45-second socket timeout, at most four attempts for transient
+network errors, and backoff of 2, 4, and 8 seconds. Each transfer is written to
+a temporary file and checked against the expected SHA-256 before atomically
+replacing the cache entry. A valid cached input needs no network access;
+invalid legacy cache entries are replaced only by a verified download.
+Digest mismatches and permanent HTTP errors fail directly. Persistent network
+failure remains a failed CI run, never a skipped DESI validation. GitHub
+Actions caches these inputs, but the script checks their hashes on every run.
+Run `python3 -m unittest -v test_verified_download` to exercise connection,
+interruption, cache, and integrity failures without downloading survey data.
+
 To compare a complete regenerated run with the frozen release outputs, copy
 the frozen CSV and JSON files to a separate directory before running the nine
 benchmark commands above, then run
