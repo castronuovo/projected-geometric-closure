@@ -10,6 +10,11 @@ Current public release: **v1.5.0**. The release tag fixes the source,
 machine-readable outputs, figures, pinned dependencies, and SHA-256 manifest
 for this reproducibility package. Earlier releases remain available.
 
+This unreleased working-tree update corrects documentation and extends the workflow
+configuration. It is not a new published release and does not change the
+frozen scientific CSV/JSON outputs. The published v1.5.0 workflow retains its original 14-output coverage;
+coverage of this extended workflow is established by its own successful run.
+
 ## Scientific architecture
 
 The package implements the Paper-III inference bridge in the companion
@@ -21,14 +26,16 @@ program:
    source-visible positive response class. Exact continuum agreement fixes its
    cyclic minimal operator up to unitary equivalence; finite projected data
    do not establish that exact identification.
-4. A separate two-time theory develops an explicit (4+2)-dimensional parent
-   realization of the surviving class.
+4. A separate two-time study investigates whether a specified
+   (4+2)-dimensional action can derive the spectrum, transport, and matter
+   couplings jointly. That parent completion remains open.
 
-The claimed uniqueness is conditional on the predeclared rival bank and the
-retained observable contract. A theory reproducing the complete operator and
-cross-channel signature belongs to the same observable equivalence class; the
-package does not convert that equivalence into an unconditional proof of the
-parent ontology.
+Finite-data exclusion is conditional on the declared response class, rival
+bank, and observable contract. Exact-response uniqueness instead requires the
+positive minimal-realization hypotheses and exact agreement on an open
+interval; it does not depend on completeness of a finite rival bank. A theory
+reproducing the same observable response belongs to the corresponding
+equivalence class. Neither result identifies the microscopic parent.
 
 The numerical and symbolic support has six layers:
 
@@ -210,10 +217,14 @@ the DESI diagnostic. Its DESI-specific tolerances are `3e-5` relative and
 independent numerical runs; structural metadata and integer counts still
 match exactly. This comparison does not validate the linear Kaiser forward
 model against survey mocks or turn the DESI score into a constraint.
-The public GitHub workflow still regenerates the 14 inherited outputs. When
+The published v1.5.0 workflow regenerates the 14 inherited outputs. When
 given that exact legacy reference set, the verifier reports the partial scope
-explicitly. A complete v1.5.0 replay requires running the three additional
-scripts listed above and retaining all 17 frozen outputs before comparison.
+explicitly. The working-tree workflow preserves and compares all 17
+frozen outputs, including the spectral-duality and DESI diagnostics, and runs
+the self-validating rival-map contract check. A complete replay requires all
+nine scientific scripts plus that contract check. DESI replay needs network
+access to the official input containers. A successful run of the extended configuration is required to establish
+full CI coverage; a historical 14-output badge is not sufficient.
 
 Optional thresholds can be supplied explicitly, for example:
 
@@ -447,11 +458,7 @@ remain immutable and are not overwritten.
 
 ## License
 
-- `benchmark_projected_spectral.py` is licensed under the
-  [BSD 3-Clause License](LICENSE).
-- `injection_recovery.py` and `conditional_information_requirement.py` are
-  licensed under the [BSD 3-Clause License](LICENSE).
-- `finite_residue_5d_benchmark.py` is licensed under the
+- The Python source code is distributed under the
   [BSD 3-Clause License](LICENSE).
 - The documentation, CSV and JSON outputs, and figures are licensed under
   [Creative Commons Attribution 4.0 International](LICENSE-CONTENT).

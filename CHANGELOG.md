@@ -1,5 +1,16 @@
 # Changelog
 
+## Unreleased working-tree corrections
+
+- Corrected the documented status of the proposed two-time parent completion
+  and distinguished exact-response uniqueness from rival-bank exclusion.
+- Extended the working-tree CI configuration to preserve all 17 frozen scientific
+  outputs and run all nine scientific scripts plus the rival-map contract
+  check. Full coverage requires a successful run of the extended workflow.
+- Clarified the license statement to cover the Python source code consistently.
+- No frozen scientific output, numerical algorithm, or published release tag
+  was changed.
+
 ## 1.5.0 — 2026-09-29
 
 - Added a deterministic synthetic check for the ordered rival-family
@@ -33,8 +44,9 @@
   not as a detection or constraint.
 - Added project-recorded hashes for downloaded inputs and pinned h5py/CAMB
   dependencies. The official DESI source files are not redistributed.
-- Included DESI CSV/JSON outputs in the numerical verifier and continuous
-  integration, with explicit tolerances for profiled nuisance optimization.
+- Included DESI CSV/JSON outputs in the numerical verifier, with explicit
+  tolerances for profiled nuisance optimization. The published v1.5.0 workflow
+  does not regenerate the DESI outputs; it checks the 14 inherited outputs.
   Removed cached DESI HDF5 inputs from the local code archive.
 
 ## 1.4.1 — 2026-09-11
