@@ -1,20 +1,20 @@
 # Changelog
 
-## Unreleased working-tree corrections
+## 1.6.0 — 14 October 2026
 
-- Fixed transient DESI connection failures with an explicit socket timeout,
-  bounded retries, verified atomic downloads, and hash-checked CI input cache.
-- Added eight network-failure regression tests. Scientific calculations,
-  expected input digests, and frozen numeric outputs are unchanged.
-
-- Corrected the documented status of the proposed two-time parent completion
-  and distinguished exact-response uniqueness from rival-bank exclusion.
-- Extended the working-tree CI configuration to preserve all 17 frozen scientific
-  outputs and run all nine scientific scripts plus the rival-map contract
-  check. Full coverage requires a successful run of the extended workflow.
-- Clarified the license statement to cover the Python source code consistently.
-- No frozen scientific output, numerical algorithm, or published release tag
-  was changed.
+- Added the second-order growth allowance, stored JSON/CSV outputs and Fig. S8.
+  Sampled margins and interpolated crossings are explicitly distinguished from
+  certified roots or a complete amplitude interval; the fixed-background
+  synthetic scope is unchanged.
+- Regenerated the extension under the declared NumPy 1.26.4 environment;
+  numerical values agree with the earlier NumPy 2.0.2 outputs within the
+  declared optimization tolerances. No interval-arithmetic claim is made.
+- Extended the verifier and workflow to all 19 machine-readable outputs.
+  Legacy 14- and 17-output sets are identified as partial coverage.
+- Added regression checks for incomplete output sets, changed margins and
+  changed structural metadata; retained the input-download regression checks.
+- Included the existing bounded retries and hash-verified input-cache handling.
+  Historical release archives and inherited numerical outputs are unchanged.
 
 ## 1.5.0 — 2026-09-29
 

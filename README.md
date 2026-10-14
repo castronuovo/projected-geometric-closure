@@ -1,3 +1,6 @@
+Version: **1.6.0**. The package includes the second-order extension and a
+19-output reproducibility workflow. Earlier release archives remain unchanged.
+
 # Spectral identifiability of a protected cosmological response
 
 This directory contains the reproducibility materials for
@@ -22,7 +25,7 @@ program:
 
 1. Paper I defines the protected late-time single-pole kernel.
 2. Paper II supplies its observational entry and falsification gates.
-3. Paper III applies progressive exclusion to test compatibility with a
+3. The spectral analysis applies progressive exclusion to test compatibility with a
    source-visible positive response class. Exact continuum agreement fixes its
    cyclic minimal operator up to unitary equivalence; finite projected data
    do not establish that exact identification.
@@ -163,6 +166,42 @@ stationary tangent recovery, independent-history recovery, cone inclusion,
 NNLS KKT conditions, and comparison of actual errors with the analytic bound.
 Floating-point convergence is not interval-arithmetic certification.
 
+## Second-order allowance (v1.6.0)
+
+Run `python causal_second_order_allowance.py` to regenerate
+`causal_second_order_allowance_results.json`,
+`causal_second_order_certified_range.csv`, and
+`figs/figS8_second_order_allowance.png` (about 15 s). The script reuses
+`causal_growth_transport.py` and `causal_transport_support_audit.py` without
+modifying them.
+
+The exact response satisfies `R_P = 2 e1 + Q + T3`, where `Q` is bilinear in
+the spectral measure and `T3` collects non-negative terms of third and higher
+order. The script bounds `Q` by `alpha^2 n2` with `n2` the supremum of the
+projected pair term over a declared 243-point mass grid (`n2 = 39.49`,
+attained at `m = m' = 0.110 h/Mpc`; a grid estimate plus analytic Lipschitz
+covering allowance of `55.34448` for the mass continuum; no validated ODE error enclosure), and `T3` by a Neumann tail with the operator
+norm `rho0 = 0.4633` of the actual background. It validates the second-order
+term against the stored stationary actual errors (relative difference
+`4.5e-5` to `4.5e-3`).
+
+The covered floating-point margin is positive at the sampled amplitude
+`0.04` and negative at `0.05`. Linear interpolation estimates crossings of
+`6.3e-4` with the old allowance, `0.0423` with the covered second-order
+allowance, and `0.0509` without mass-continuum covering. These are interpolated
+diagnostics, not certified roots or a certificate over a complete amplitude
+interval. Loss of the margin comes from the combined allowance; the second-order
+contribution remains larger than the third-order allowance near the crossing.
+This is a synthetic-contract diagnostic, not a forecast or observational result.
+The verifier and workflow include both new machine-readable outputs. The
+stored extension was regenerated under the pinned NumPy 1.26.4 environment
+and agrees with the previous NumPy 2.0.2 values within the declared numerical
+tolerances. The new CSV/JSON comparisons use the existing optimization
+allowance (`1e-7` relative, `1e-12` absolute) because the dual witness uses
+non-negative least squares. Structural metadata, counts and booleans must
+match exactly. A successful Actions run verifies all 19 outputs; the image
+is regenerated but is not included in the numerical-output comparison.
+
 ## Environment and execution
 
 The additional `rival_map_calibration_check.py` is a deterministic synthetic
@@ -198,6 +237,7 @@ python3 conditional_information_requirement.py
 python3 causal_growth_transport.py
 python3 causal_transport_support_audit.py
 python3 causal_transport_free_amplitude.py
+python3 causal_second_order_allowance.py
 python3 desi_dr1_tangent_test.py
 python3 rival_map_calibration_check.py
 ```
@@ -218,11 +258,11 @@ Run `python3 -m unittest -v test_verified_download` to exercise connection,
 interruption, cache, and integrity failures without downloading survey data.
 
 To compare a complete regenerated run with the frozen release outputs, copy
-the frozen CSV and JSON files to a separate directory before running the nine
+the frozen CSV and JSON files to a separate directory before running the ten
 benchmark commands above, then run
 `python3 verify_reproducibility.py FROZEN_DIRECTORY`. The synthetic contract
 check is self-validating and has no frozen scientific output.
-The verifier covers all nine CSV and eight JSON scientific outputs, including
+The verifier covers all ten CSV and nine JSON scientific outputs, including
 the DESI diagnostic. Its DESI-specific tolerances are `3e-5` relative and
 `1e-6` absolute because profiled nuisance optima vary slightly across
 independent numerical runs; structural metadata and integer counts still
@@ -230,10 +270,10 @@ match exactly. This comparison does not validate the linear Kaiser forward
 model against survey mocks or turn the DESI score into a constraint.
 The published v1.5.0 workflow regenerates the 14 inherited outputs. When
 given that exact legacy reference set, the verifier reports the partial scope
-explicitly. The working-tree workflow preserves and compares all 17
+explicitly. The v1.6.0 workflow preserves and compares all 19
 frozen outputs, including the spectral-duality and DESI diagnostics, and runs
 the self-validating rival-map contract check. A complete replay requires all
-nine scientific scripts plus that contract check. DESI replay needs network
+ten scientific scripts plus that contract check. DESI replay needs network
 access to the official input containers. A successful run of the extended configuration is required to establish
 full CI coverage; a historical 14-output badge is not sufficient.
 
@@ -260,6 +300,8 @@ These commands regenerate:
 - `causal_growth_transport_summary.json`
 - `causal_transport_support_results.json`
 - `causal_transport_free_amplitude_results.json`
+- `causal_second_order_allowance_results.json`
+- `causal_second_order_certified_range.csv`
 - `figs/fig1_geometric_spectral_test.png`
 - `figs/fig2_identifiability_benchmark.png`
 - `figs/fig3_survey_projected_spectral_benchmark.png`
@@ -273,6 +315,7 @@ These commands regenerate:
 - `desi_dr1_tangent_scan.csv`
 - `desi_dr1_tangent_summary.json`
 - `figs/figS7_desi_dr1_tangent_test.png`
+- `figs/figS8_second_order_allowance.png`
 
 The benchmark script stops if the window rows are not normalized, if the covariance is
 not positive definite, or if a declared spectral inequality is violated
@@ -459,13 +502,13 @@ to verify the frozen source, results, and figures. Rendering hashes can change
 with the Matplotlib or font-stack version; the JSON and CSV files are the
 machine-readable scientific outputs.
 
-The current frozen public package is release
-[`v1.5.0`](https://github.com/castronuovo/projected-geometric-closure/releases/tag/v1.5.0),
-published on 29 September 2026. It adds the DESI tangent demonstrator,
-spectral-duality benchmark, rival-map calibration check, and their applicable
-machine-readable outputs. Earlier tags, including
-[`v1.4.1`](https://github.com/castronuovo/projected-geometric-closure/releases/tag/v1.4.1),
-remain immutable and are not overwritten.
+The versioned package is
+[`v1.6.0`](https://github.com/castronuovo/projected-geometric-closure/releases/tag/v1.6.0).
+It adds the second-order allowance and complete 19-output workflow coverage.
+Earlier tags, including
+[`v1.5.0`](https://github.com/castronuovo/projected-geometric-closure/releases/tag/v1.5.0)
+and [`v1.4.1`](https://github.com/castronuovo/projected-geometric-closure/releases/tag/v1.4.1),
+remain unchanged.
 
 ## License
 

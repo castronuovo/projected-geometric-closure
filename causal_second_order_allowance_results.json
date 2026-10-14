@@ -1,0 +1,56 @@
+{
+  "status": "audit extension; floating point on a declared mass grid; synthetic contract; no significance",
+  "steps": 512,
+  "n_masses_pair_grid": 243,
+  "n2_grid": 39.48698255351654,
+  "n2_argmax_masses_h_Mpc": [
+    0.11006941712522092,
+    0.11006941712522092
+  ],
+  "n2_step_halving_difference": 5.238753431058285e-09,
+  "n2_with_lipschitz_covering": 55.34448099676033,
+  "lipschitz_constant_per_unit_q": 630.9590726253012,
+  "low_mass_tail_q_shift": 0.0011111111111111111,
+  "high_mass_tail_q_shift": 3.6e-05,
+  "rho0_unit_operator_norm": 0.46331051750054164,
+  "previous_operator_norm_coefficient": 1.1588830833596717,
+  "validation_second_order_vs_stored_stationary_error": [
+    {
+      "amplitude": 0.0003,
+      "second_order": 2.9267179755290584e-06,
+      "stored_actual_error": 2.9268509545294575e-06,
+      "relative_difference": 4.5434155160262445e-05
+    },
+    {
+      "amplitude": 0.001,
+      "second_order": 3.251908861698955e-05,
+      "stored_actual_error": 3.252397907097942e-05,
+      "relative_difference": 0.00015036456576228698
+    },
+    {
+      "amplitude": 0.003,
+      "second_order": 0.0002926717975529059,
+      "stored_actual_error": 0.00029280386568128247,
+      "relative_difference": 0.00045104639608926624
+    },
+    {
+      "amplitude": 0.01,
+      "second_order": 0.0032519088616989548,
+      "stored_actual_error": 0.0032568032454454382,
+      "relative_difference": 0.001502818370538083
+    },
+    {
+      "amplitude": 0.03,
+      "second_order": 0.02926717975529059,
+      "stored_actual_error": 0.02939956077137132,
+      "relative_difference": 0.004502822920049805
+    }
+  ],
+  "new_allowance_bounds_all_stored_stationary_errors": true,
+  "first_order_support_penalty_lipschitz": 602.9759332834981,
+  "first_order_covering_radius": 0.0008432318455797727,
+  "alpha_star_previous": 0.0006303789206203905,
+  "alpha_star_new": 0.04229344146796993,
+  "alpha_star_new_grid_level": 0.05092673524364521,
+  "numpy_version": "1.26.4"
+}
