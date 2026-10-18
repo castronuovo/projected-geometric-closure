@@ -51,18 +51,24 @@ jobs:
             desi_dr1_tangent_summary.json \
             causal_second_order_allowance_results.json \
             causal_second_order_certified_range.csv \
+            causal_amplitude_reachability_results.json \
+            gapped_residue_inverse_diagnostic_results.json \
+            bounded_joint_history_results.json \
             "$RUNNER_TEMP/frozen-outputs/"
       - name: Recompute benchmarks and restricted DESI diagnostic
         run: |
           python benchmark_projected_spectral.py
           python spectral_shadow_duality.py
           python finite_residue_5d_benchmark.py
+          python gapped_residue_inverse_diagnostic.py
           python injection_recovery.py
           python conditional_information_requirement.py
           python causal_growth_transport.py
           python causal_transport_support_audit.py
           python causal_transport_free_amplitude.py
           python causal_second_order_allowance.py
+          python bounded_joint_history.py
+          python causal_amplitude_reachability.py
           python desi_dr1_tangent_test.py
           python rival_map_calibration_check.py
       - name: Validate citation metadata against the CFF schema

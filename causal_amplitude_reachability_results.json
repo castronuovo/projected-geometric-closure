@@ -1,0 +1,118 @@
+{
+  "status": "numerically_verified synthetic finite-power counterfit; no survey or parent inference",
+  "k_h_Mpc": [
+    0.035,
+    0.14
+  ],
+  "mass_h_Mpc": 0.15,
+  "second_mass_h_Mpc": 0.3,
+  "baseline_amplitude": 0.02,
+  "maximum_second_mass_fraction": 0.001,
+  "start_N": -1.3862943611198906,
+  "output_N": [
+    -0.6931471805599453,
+    0.0
+  ],
+  "centers_N": [
+    -1.1552453009332422,
+    -0.9241962407465938,
+    -0.4620981203732969,
+    -0.23104906018664845
+  ],
+  "widths_N": [
+    0.08664339756999316,
+    0.08664339756999316,
+    0.08664339756999316,
+    0.08664339756999316
+  ],
+  "fitted_coefficients": [
+    -8.309458181030403e-07,
+    8.197931032846539e-07,
+    -0.0001754588853040534,
+    0.00032180158614886483
+  ],
+  "target_power_response": [
+    0.0027690703515150794,
+    0.007080773227070569,
+    0.004909197618119254,
+    0.015287606358928674
+  ],
+  "baseline_power_response": [
+    0.0027690836570359867,
+    0.007080799356935508,
+    0.004909690258107169,
+    0.015289327312758783
+  ],
+  "fitted_power_response": [
+    0.0027690703515146353,
+    0.007080773227073234,
+    0.004909197618117034,
+    0.015287606358929118
+  ],
+  "baseline_jacobian": [
+    [
+      0.02817366148164061,
+      0.012326602242313913,
+      0.0,
+      0.0
+    ],
+    [
+      0.07142850409877284,
+      0.04052650917756486,
+      0.0,
+      0.0
+    ],
+    [
+      0.038430073915264505,
+      0.02484455236546477,
+      0.006475198474907772,
+      0.002035593265220932
+    ],
+    [
+      0.09801873357280695,
+      0.08236115274315527,
+      0.03701535431884427,
+      0.01487766002367686
+    ]
+  ],
+  "jacobian_singular_values": [
+    0.16464305255106423,
+    0.026424727024300407,
+    0.0026474203933070195,
+    0.0004761468067744432
+  ],
+  "jacobian_condition": 345.78212057412316,
+  "relative_tangent_finite_difference_error": 2.3523078443168844e-09,
+  "exact_amplitude_bounds": [
+    0.019824541114695948,
+    0.020321801586148866
+  ],
+  "sampled_amplitude_range": [
+    0.01982454142662313,
+    0.02032180101405665
+  ],
+  "max_instantaneous_force_response_difference": 0.00019347021912216253,
+  "max_fitted_power_residual": 2.6645352591003757e-15,
+  "independent_Radau_max_power_residual": 1.9095836023552692e-14,
+  "DOP853_vs_Radau_fitted_difference": 1.2434497875801753e-14,
+  "DOP853_vs_Radau_target_difference": 9.325873406851315e-15,
+  "iterations": [
+    {
+      "step": 0,
+      "max_power_residual": 6.4641625385775114e-12
+    },
+    {
+      "step": 1,
+      "max_power_residual": 2.6645352591003757e-15
+    }
+  ],
+  "numpy": "2.0.2",
+  "scipy": "1.13.1",
+  "limitations": [
+    "four ideal matter-power samples",
+    "fixed background and matched data",
+    "phenomenological amplitude freedom; no covariant completion",
+    "no uniform reachable radius or survey significance",
+    "floating point, not interval arithmetic"
+  ]
+}

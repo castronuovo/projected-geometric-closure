@@ -229,6 +229,36 @@ def crossing(rows, key):
     return None
 
 
+def plot_results(rows, validation):
+    """Render stored diagnostics without repeating the scientific calculation."""
+    alphas = np.array([r['amplitude'] for r in rows])
+    signal = np.array([r['dual_target'] - r['support_penalty'] for r in rows])
+    fig, axes = plt.subplots(1, 2, figsize=(10, 3.6), constrained_layout=True)
+    axes[0].loglog(alphas, [r['allowance_previous'] for r in rows], 's--',
+                   label='Previous uniform allowance')
+    axes[0].loglog(alphas, [r['allowance_new'] for r in rows], 'o-',
+                   label='Second-order allowance')
+    actual = [(v['amplitude'], v['stored_actual_error'])
+              for v in validation]
+    axes[0].loglog(*zip(*actual), '^:', label='Actual stationary error')
+    axes[0].loglog(alphas, signal, 'k-', lw=1, label='Dual signal minus support penalty')
+    axes[0].set(xlabel='Total response amplitude', ylabel='Whitened projected norm',
+                title='Linearization allowance')
+    axes[0].legend(fontsize=7)
+    for key, label, style in (('margin_previous', 'Previous', 's--'),
+                              ('margin_new', 'Second-order', 'o-')):
+        axes[1].semilogx(alphas, [r[key]/s for r, s in zip(rows, signal)], style,
+                         label=label)
+    axes[1].axhline(0.0, color='k', lw=0.8)
+    axes[1].set(xlabel='Total response amplitude', ylim=(-1.0, 1.0),
+                ylabel='Estimated margin / (dual signal minus penalty)',
+                title='Estimated exclusion margin (clipped at $-1$)')
+    axes[1].legend(fontsize=7)
+    (HERE/'figs').mkdir(exist_ok=True)
+    fig.savefig(HERE/'figs/figS8_second_order_allowance.png', dpi=220)
+    plt.close(fig)
+
+
 def run():
     main = pair_norms(STEPS)
     half = pair_norms(STEPS//2)
@@ -279,32 +309,7 @@ def run():
         writer.writeheader()
         writer.writerows(rows)
 
-    alphas = np.array([r['amplitude'] for r in rows])
-    signal = np.array([r['dual_target'] - r['support_penalty'] for r in rows])
-    fig, axes = plt.subplots(1, 2, figsize=(10, 3.6), constrained_layout=True)
-    axes[0].loglog(alphas, [r['allowance_previous'] for r in rows], 's--',
-                   label='Previous uniform allowance')
-    axes[0].loglog(alphas, [r['allowance_new'] for r in rows], 'o-',
-                   label='Second-order allowance')
-    actual = [(v['amplitude'], v['stored_actual_error'])
-              for v in main['validation']]
-    axes[0].loglog(*zip(*actual), '^:', label='Actual stationary error')
-    axes[0].loglog(alphas, signal, 'k-', lw=1, label='Dual signal minus support penalty')
-    axes[0].set(xlabel='Total response amplitude', ylabel='Whitened projected norm',
-                title='Linearization allowance')
-    axes[0].legend(fontsize=7)
-    for key, label, style in (('margin_previous', 'Previous', 's--'),
-                              ('margin_new', 'Second-order', 'o-')):
-        axes[1].semilogx(alphas, [r[key]/s for r, s in zip(rows, signal)], style,
-                         label=label)
-    axes[1].axhline(0.0, color='k', lw=0.8)
-    axes[1].set(xlabel='Total response amplitude', ylim=(-1.0, 1.0),
-                ylabel='Certified margin / (dual signal minus penalty)',
-                title='Certified exclusion margin (clipped at $-1$)')
-    axes[1].legend(fontsize=7)
-    (HERE/'figs').mkdir(exist_ok=True)
-    fig.savefig(HERE/'figs/figS8_second_order_allowance.png', dpi=220)
-    plt.close(fig)
+    plot_results(rows, main['validation'])
     print('n2 grid %.4f; with covering %.4f; rho0 %.5f' % (
         main['n2_grid'], n2_cover, main['rho0']))
     print('alpha* previous %s, new %s, new (grid level) %s' % (
