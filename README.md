@@ -12,8 +12,9 @@ Published predecessor: <https://github.com/castronuovo/projected-geometric-closu
 Relative to v1.6.0, version v1.7.0 includes a four-power
 counterfit with an independent Radau integration check.
 The 19 inherited numerical products remain unchanged; three Python-generated
-products bring the Python comparison set to 22. No new full numerical
-replay of the complete package is claimed.
+products bring the Python comparison set to 22. The release workflow reproduces
+and compares all 22 products under the pinned environment; stored reference
+files retain their original runtime provenance.
 
 The auxiliary causal-amplitude theorem is analytic: causal triangular blocks and classical
 Cauchy nonsingularity give full rank, then the ordinary inverse-function
@@ -29,8 +30,8 @@ The stored Python run used NumPy 2.0.2 and SciPy 1.13.1; the package's existing
 NumPy 1.26.4 pin remains unchanged. Runtime-version differences are printed
 as provenance by the verifier; physical outputs use explicit optimization
 tolerances. Solver residuals and finite-difference diagnostics must meet their
-explicit bounds, rather than reproduce roundoff. No rerun under the NumPy
-1.26.4 pin is claimed for this new example.
+explicit bounds, rather than reproduce roundoff. The release workflow independently checks this example under NumPy 1.26.4
+while preserving the stored reference provenance.
 
 ## Conditional heavy-residue inverse diagnostic
 
@@ -69,7 +70,8 @@ with maximum absolute discrepancy 1.41e-5. No case meets the predeclared
 exclusion of either the finite family or all slope-bounded histories. The
 priors are phenomenological inputs, not a derived two-time law; the ideal
 snapshots are not survey likelihoods. This bounded calculation used NumPy
-2.0.2/SciPy 1.13.1; a replay under the existing pinned NumPy is not claimed.
+2.0.2/SciPy 1.13.1; the release workflow independently checks the pinned
+NumPy 1.26.4 environment.
 The separate Wolfram checks and internal review records stay outside this
 public Python package. These materials are included in version v1.7.0.
 

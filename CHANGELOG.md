@@ -19,8 +19,8 @@
   tolerance on physical outputs rather than platform-identical optimizer
   coefficients. Physical input and structural checks remain strict.
 - Updated usage documentation and citation metadata for version v1.7.0.
-- The 19 numerical products of the public baseline are unchanged; a new full
-  replay is not claimed.
+- The 19 numerical products of the public baseline are unchanged; the release
+  workflow reproduces and compares all 22 products with pinned dependencies.
 
 ## 1.6.0 — 14 October 2026
 
