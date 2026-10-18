@@ -2,6 +2,7 @@
 import contextlib
 import csv
 import io
+import json
 import tempfile
 import unittest
 from pathlib import Path
@@ -24,19 +25,126 @@ class OutputCoverageTests(unittest.TestCase):
                     verifier.main()
             return output.getvalue()
 
-    def test_complete_set_includes_both_new_outputs(self):
-        self.assertEqual(len(verifier.FILES), 19)
-        self.assertIn('All 19 scientific outputs', self.invoke())
+    def test_complete_set_includes_causal_amplitude_output(self):
+        self.assertEqual(len(verifier.FILES), 22)
+        self.assertIn('All 22 scientific outputs', self.invoke())
+
+    def test_v16_set_is_reported_as_partial(self):
+        self.assertIn('19 of 22', self.invoke(verifier.V17_FILES_NOT_IN_V16_CI))
 
     def test_previous_complete_set_is_reported_as_partial(self):
-        message = self.invoke(verifier.V16_FILES_NOT_IN_V15_CI)
-        self.assertIn('17 of 19', message)
+        message = self.invoke(verifier.V17_FILES_NOT_IN_V16_CI | verifier.V16_FILES_NOT_IN_V15_CI)
+        self.assertIn('17 of 22', message)
         self.assertIn('partial coverage', message)
-        self.assertNotIn('All 19', message)
+        self.assertNotIn('All 22', message)
 
     def test_legacy_set_is_reported_as_partial(self):
-        missing = verifier.V16_FILES_NOT_IN_V15_CI | verifier.V15_FILES_NOT_IN_LEGACY_CI
-        self.assertIn('14 of 19', self.invoke(missing))
+        missing = verifier.V17_FILES_NOT_IN_V16_CI | verifier.V16_FILES_NOT_IN_V15_CI | verifier.V15_FILES_NOT_IN_LEGACY_CI
+        self.assertIn('14 of 22', self.invoke(missing))
+
+    def test_changed_joint_history_prior_is_rejected(self):
+        source = Path(verifier.__file__).parent / 'bounded_joint_history_results.json'
+        reference = json.loads(source.read_text())
+        modified = json.loads(source.read_text())
+        modified['cases'][0]['H8']['conservative_log_slope_bound'] = 2.1
+        with self.assertRaises(AssertionError):
+            verifier.compare_bounded_joint_history(reference, modified)
+
+    def test_changed_joint_history_snapshot_is_rejected(self):
+        source = Path(verifier.__file__).parent / 'bounded_joint_history_results.json'
+        reference = json.loads(source.read_text())
+        modified = json.loads(source.read_text())
+        modified['cases'][0]['H8']['prediction'][0] += 0.001
+        with self.assertRaises(AssertionError):
+            verifier.compare_bounded_joint_history(reference, modified)
+
+    def joint_outputs(self):
+        source = Path(verifier.__file__).parent / 'bounded_joint_history_results.json'
+        return json.loads(source.read_text()), json.loads(source.read_text())
+
+    def test_equivalent_joint_history_witness_is_accepted(self):
+        import numpy as np
+        from bounded_joint_history import restrictions
+        reference, modified = self.joint_outputs()
+        case = modified['cases'][0]
+        fit = case['H8']
+        fit['coefficients'][0] += 1e-10
+        prediction, states = verifier._joint_history_prediction(tuple(fit['coefficients']))
+        fit.update(restrictions(np.asarray(fit['coefficients'])))
+        fit['prediction'], fit['states'] = prediction, states
+        residual = [p-t for p, t in zip(prediction, case['target'])]
+        fit['max_joint_residual'] = max(map(abs, residual))
+        fit['max_power_residual'] = max(abs(residual[i]) for i in (0, 1, 4, 5))
+        fit['max_growthrate_residual'] = max(abs(residual[i]) for i in (2, 3, 6, 7))
+        verifier.compare_bounded_joint_history(reference, modified)
+
+    def test_cross_platform_joint_endpoint_regression(self):
+        fit = {'max_joint_residual': 1.6690502537830554e-6}
+        tolerance = verifier._joint_fit_comparison_tolerance(fit, fit)
+        verifier.compare_json(0.00394694610733332, 0.00394694603509595,
+                              absolute_tolerance=tolerance)
+        with self.assertRaises(AssertionError):
+            verifier.compare_json(0.00394694610733332,
+                                  0.00394694610733332 + 2*tolerance,
+                                  absolute_tolerance=tolerance)
+
+    def test_inconsistent_joint_coefficients_are_rejected(self):
+        import numpy as np
+        from bounded_joint_history import restrictions
+        reference, modified = self.joint_outputs()
+        fit = modified['cases'][0]['H8']
+        fit['coefficients'][0] += 1e-5
+        fit.update(restrictions(np.asarray(fit['coefficients'])))
+        with self.assertRaisesRegex(AssertionError, 'forward_prediction'):
+            verifier.compare_bounded_joint_history(reference, modified)
+
+    def test_joint_residual_must_match_recorded_snapshots(self):
+        reference, modified = self.joint_outputs()
+        modified['cases'][0]['H8']['max_joint_residual'] += 1e-8
+        with self.assertRaisesRegex(AssertionError, 'max_joint_residual'):
+            verifier.compare_bounded_joint_history(reference, modified)
+
+    def test_joint_tied_family_is_preserved(self):
+        reference, modified = self.joint_outputs()
+        modified['cases'][0]['H2']['coefficients'][0] += 1e-7
+        with self.assertRaisesRegex(AssertionError, 'tied coefficients'):
+            verifier.compare_bounded_joint_history(reference, modified)
+
+    def test_nonfinite_joint_coefficient_is_rejected(self):
+        reference, modified = self.joint_outputs()
+        modified['cases'][0]['H8']['coefficients'][0] = float('nan')
+        with self.assertRaisesRegex(AssertionError, 'coefficients invalid'):
+            verifier.compare_bounded_joint_history(reference, modified)
+
+    def test_joint_contract_retains_strict_tolerance(self):
+        reference, modified = self.joint_outputs()
+        modified['contract']['Omega_m0'] += 1e-8
+        with self.assertRaisesRegex(AssertionError, 'contract.Omega_m0'):
+            verifier.compare_bounded_joint_history(reference, modified)
+
+    def test_changed_inverse_residue_is_rejected(self):
+        source = Path(verifier.__file__).parent / 'gapped_residue_inverse_diagnostic_results.json'
+        reference = json.loads(source.read_text())
+        modified = json.loads(source.read_text())
+        modified['rows'][0]['residue_upper'] += 0.01
+        with self.assertRaises(AssertionError):
+            verifier.compare_inverse_diagnostic(reference, modified)
+
+    def test_changed_counterfit_amplitude_is_rejected(self):
+        source = Path(verifier.__file__).parent / 'causal_amplitude_reachability_results.json'
+        reference = json.loads(source.read_text())
+        modified = json.loads(source.read_text())
+        modified['exact_amplitude_bounds'][0] = -0.01
+        with self.assertRaises(AssertionError):
+            verifier.compare_causal_amplitude(reference, modified)
+
+    def test_failed_counterfit_residual_is_rejected(self):
+        source = Path(verifier.__file__).parent / 'causal_amplitude_reachability_results.json'
+        reference = json.loads(source.read_text())
+        modified = json.loads(source.read_text())
+        modified['independent_Radau_max_power_residual'] = 1e-6
+        with self.assertRaises(AssertionError):
+            verifier.compare_causal_amplitude(reference, modified)
 
     def test_one_missing_new_output_is_rejected(self):
         with self.assertRaises(FileNotFoundError):

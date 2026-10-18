@@ -1,5 +1,29 @@
 # Changelog
 
+## 1.7.0 — 18 October 2026
+
+- Added a bounded joint growth/velocity diagnostic: three fixed two-mass
+  targets, nested smooth temporal families, explicit sufficient amplitude/slope
+  bounds and independent Radau residual checks. The stored fits are approximate;
+  no global exclusion, survey significance or complete parent is claimed.
+
+- Added the auxiliary four-power positive-amplitude counterfit with an
+  independent Radau integration check; extended the verifier and workflow
+  to 22 Python-generated outputs.
+- Added the conditional heavy-residue inverse postprocessing using frozen
+  scalar modes, with normalization sensitivity and an omitted-tail allowance.
+- Corrected Fig. S8's numerical-certification labels and separated rendering
+  from calculation so frozen results can be reused.
+- Validate bounded-history coefficient witnesses by forward reconstruction,
+  prior checks and residual consistency rather than platform-identical
+  optimizer coefficients. Fixed-history reconstruction and maximum residuals
+  retain a 5e-11 absolute tolerance; comparisons of individual fit outputs allow
+  1e-4 of the approximation error with that numerical floor. Physical input
+  and structural checks remain strict.
+- Updated usage documentation and citation metadata for version v1.7.0.
+- The 19 numerical products of the public baseline are unchanged; the release
+  workflow reproduces and compares all 22 products with pinned dependencies.
+
 ## 1.6.0 — 14 October 2026
 
 - Added the second-order growth allowance, stored JSON/CSV outputs and Fig. S8.
@@ -26,9 +50,8 @@
 - Published the `v1.5.0` Python reproducibility package. Symbolic,
   formal, and graphical-abstract development files remain outside this package.
 
-- Reoriented the package around the Paper-III inference bridge from the
-  protected single-pole response to a conditionally unique source-visible
-  operator class.
+- Reoriented the package around the protected single-pole response and the
+  conditionally unique source-visible operator class.
 - Updated the manuscript title and metadata to foreground spectral
   identifiability and the limits of parent identification.
 - Added the finite-data spectral-shadow duality executable, its

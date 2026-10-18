@@ -1,37 +1,96 @@
-Version: **1.6.0**. The package includes the second-order extension and a
-19-output reproducibility workflow. Earlier release archives remain unchanged.
-
 # Spectral identifiability of a protected cosmological response
 
-This directory contains the reproducibility materials for
-*Spectral Identifiability of a Protected Cosmological Response:
-Conditional Exclusion and the Limits of a Two-Time Shadow*.
+**Current package version: v1.7.0.**
 
-Repository: <https://github.com/castronuovo/projected-geometric-closure>
+This repository contains the versioned source and reproducibility data for v1.7.0.
 
-Current public release: **v1.5.0**. The release tag fixes the source,
-machine-readable outputs, figures, pinned dependencies, and SHA-256 manifest
-for this reproducibility package. Earlier releases remain available.
+Reproducibility materials for *Spectral Identifiability of a Protected
+Cosmological Response: Conditional Exclusion and the Limits of a Two-Time Shadow*.
 
-This unreleased working-tree update corrects documentation and extends the workflow
-configuration. It is not a new published release and does not change the
-frozen scientific CSV/JSON outputs. The published v1.5.0 workflow retains its original 14-output coverage;
-coverage of this extended workflow is established by its own successful run.
+Published predecessor: <https://github.com/castronuovo/projected-geometric-closure/releases/tag/v1.6.0>
+
+Relative to v1.6.0, version v1.7.0 includes a four-power
+counterfit with an independent Radau integration check.
+The 19 inherited numerical products remain unchanged; three Python-generated
+products bring the Python comparison set to 22. The release workflow reproduces
+and compares all 22 products under the pinned environment; stored reference
+files retain their original runtime provenance.
+
+The auxiliary causal-amplitude theorem is analytic: causal triangular blocks and classical
+Cauchy nonsingularity give full rank, then the ordinary inverse-function
+theorem gives exact local saturation around sufficiently small positive
+constant amplitudes. This numerical example illustrates rather than proves
+that theorem. Finite distinct scales, ordered epochs, a fixed positive mass,
+regular fixed background and unrestricted smooth positive history are material
+assumptions. No useful uniform reachable radius is asserted.
+
+To reproduce just the new example, run `python causal_amplitude_reachability.py`.
+Preserve its frozen JSON first.
+The stored Python run used NumPy 2.0.2 and SciPy 1.13.1; the package's existing
+NumPy 1.26.4 pin remains unchanged. Runtime-version differences are printed
+as provenance by the verifier; physical outputs use explicit optimization
+tolerances. Solver residuals and finite-difference diagnostics must meet their
+explicit bounds, rather than reproduce roundoff. The release workflow independently checks this example under NumPy 1.26.4
+while preserving the stored reference provenance.
+
+## Conditional heavy-residue inverse diagnostic
+
+`gapped_residue_inverse_diagnostic.py` reuses the stored scalar-mode spectrum
+and total-weight sum rule; it does not recompute eigenvalues. It applies the
+manuscript's existing gap-conditioned inverse bound at three finite momenta
+and four externally supplied normalization intervals. The JSON records the
+input hashes, omitted-tail allowance and twelve inverse intervals. Stored
+spectral roots and weights are floating-point inputs, so this is not a
+validated interval enclosure or a survey constraint. The joint ideal growth/velocity theorem remains analytic. The additional
+bounded-history diagnostic below reports approximate, rather than exact,
+joint fits under declared temporal restrictions.
+
+## Bounded joint growth/velocity histories
+
+`python bounded_joint_history.py` generates a separate synthetic diagnostic
+using a pure-growing flat matter–Lambda reference and the same declared
+mass/background/matching for both competitors. The script reports all three
+stationary heavy fractions, nested two- and eight-coefficient C-infinity
+history families, and an explicit sufficient coefficient box ensuring positive
+amplitude and a logarithmic-slope bound. Its JSON records full-precision
+coefficients, eight endpoint observables, attained residuals, admissibility
+and independent Radau residual checks. Preserve the frozen JSON before running.
+
+The verifier checks each recorded coefficient vector by replaying the declared
+forward model, checking its amplitude/slope restrictions and recomputing the
+residuals from its snapshots. Optimizer coefficients and their solution-specific
+envelopes may differ between platforms. Fixed-history forward reconstruction
+and attained maximum residuals retain an absolute tolerance of 5e-11.
+Comparisons of individual endpoints, states and component residuals between
+separately optimized histories allow 1e-4 of their attained approximation error,
+with a 5e-11 numerical floor. This is a portability criterion, not an integration
+error bound or an exact-fit claim; the 1e-10 computational fit threshold is
+unchanged. The physical contract and structural metadata retain strict checks.
+
+The one-percent heavy target has an admissible eight-coefficient approximation
+with maximum absolute discrepancy 1.41e-5. No case meets the predeclared
+1e-10 computational tolerance. A nonzero optimizer residual is not a global
+exclusion of either the finite family or all slope-bounded histories. The
+priors are phenomenological inputs, not a derived two-time law; the ideal
+snapshots are not survey likelihoods. This bounded calculation used NumPy
+2.0.2/SciPy 1.13.1; the release workflow independently checks the pinned
+NumPy 1.26.4 environment.
+The separate Wolfram checks and internal review records stay outside this
+public Python package. These materials are included in version v1.7.0.
 
 ## Scientific architecture
 
-The package implements the Paper-III inference bridge in the companion
-program:
-
-1. Paper I defines the protected late-time single-pole kernel.
-2. Paper II supplies its observational entry and falsification gates.
-3. The spectral analysis applies progressive exclusion to test compatibility with a
-   source-visible positive response class. Exact continuum agreement fixes its
-   cyclic minimal operator up to unitary equivalence; finite projected data
-   do not establish that exact identification.
-4. A separate two-time study investigates whether a specified
-   (4+2)-dimensional action can derive the spectrum, transport, and matter
-   couplings jointly. That parent completion remains open.
+The manuscript combines late-time cosmological response tests with spectral
+inference and an explicit classical two-time shadow interpretation. Its
+progressive exclusion tests compatibility with a source-visible positive
+response class. Exact continuum agreement fixes the cyclic minimal operator
+up to unitary equivalence; finite projected data do not establish that exact
+identification. A local causal obstruction shows that unrestricted common
+positive temporal amplitudes at one fixed mass can saturate finite power data.
+The joint ideal growth/velocity result applies to a pure-growing flat
+matter-plus-vacuum reference, and conditional tests retain their stated
+physical history contract. The complete parent dynamics, quantum consistency,
+and joint spectrum--matter matching are outside the scope of this manuscript.
 
 Finite-data exclusion is conditional on the declared response class, rival
 bank, and observable contract. Exact-response uniqueness instead requires the
@@ -69,7 +128,7 @@ The numerical and symbolic support has six layers:
    measures can agree on the retained samples while differing as continuum
    Stieltjes responses.
 
-## Two-time-parent inference scope
+## Explicit two-time interpretation and attribution limits
 
 The manuscript additionally derives an analytic result that does not require a
 numerical pipeline. Every single-field Einstein-frame potential admits an
@@ -79,12 +138,6 @@ mediator mass, or reduced potential alone. The associated matter-coupling
 analysis yields three distinct branches: universal screened coupling,
 species-dependent dark coupling, and locally constrained weak universal
 coupling. None is silently identified with the universal kernel.
-
-Independent Wolfram checks and the maintained Lean theorem remain in the
-author's local development workspace. The graphical-abstract source and
-generator are also kept with the manuscript assets, outside this package.
-The two legacy scripts under the manuscript's `script/` directory deliberately
-raise an obsolete-benchmark error and are not part of this package.
 
 The late-time scale and redshift coverage is DESI-like at the level of
 binning. No released DESI tracer selection, window, covariance, catalogue, or
@@ -199,7 +252,8 @@ and agrees with the previous NumPy 2.0.2 values within the declared numerical
 tolerances. The new CSV/JSON comparisons use the existing optimization
 allowance (`1e-7` relative, `1e-12` absolute) because the dual witness uses
 non-negative least squares. Structural metadata, counts and booleans must
-match exactly. A successful Actions run verifies all 19 outputs; the image
+match exactly. The updated workflow is configured to verify all 22 outputs;
+it has not been run for this local revision. The image
 is regenerated but is not included in the numerical-output comparison.
 
 ## Environment and execution
@@ -232,12 +286,14 @@ Run from this directory:
 python3 benchmark_projected_spectral.py
 python3 spectral_shadow_duality.py
 python3 finite_residue_5d_benchmark.py
+python3 gapped_residue_inverse_diagnostic.py
 python3 injection_recovery.py
 python3 conditional_information_requirement.py
 python3 causal_growth_transport.py
 python3 causal_transport_support_audit.py
 python3 causal_transport_free_amplitude.py
 python3 causal_second_order_allowance.py
+python3 causal_amplitude_reachability.py
 python3 desi_dr1_tangent_test.py
 python3 rival_map_calibration_check.py
 ```
@@ -258,11 +314,11 @@ Run `python3 -m unittest -v test_verified_download` to exercise connection,
 interruption, cache, and integrity failures without downloading survey data.
 
 To compare a complete regenerated run with the frozen release outputs, copy
-the frozen CSV and JSON files to a separate directory before running the ten
+the frozen CSV and JSON files to a separate directory before running the twelve
 benchmark commands above, then run
 `python3 verify_reproducibility.py FROZEN_DIRECTORY`. The synthetic contract
 check is self-validating and has no frozen scientific output.
-The verifier covers all ten CSV and nine JSON scientific outputs, including
+The verifier covers all ten CSV and twelve JSON Python-generated scientific outputs, including
 the DESI diagnostic. Its DESI-specific tolerances are `3e-5` relative and
 `1e-6` absolute because profiled nuisance optima vary slightly across
 independent numerical runs; structural metadata and integer counts still
@@ -272,8 +328,9 @@ The published v1.5.0 workflow regenerates the 14 inherited outputs. When
 given that exact legacy reference set, the verifier reports the partial scope
 explicitly. The v1.6.0 workflow preserves and compares all 19
 frozen outputs, including the spectral-duality and DESI diagnostics, and runs
-the self-validating rival-map contract check. A complete replay requires all
-ten scientific scripts plus that contract check. DESI replay needs network
+the self-validating rival-map contract check. The v1.7.0 workflow adds the three diagnostic outputs and is configured for
+all 22 scientific outputs. A complete replay also includes the rival-map
+contract check. DESI replay needs network
 access to the official input containers. A successful run of the extended configuration is required to establish
 full CI coverage; a historical 14-output badge is not sufficient.
 
@@ -502,7 +559,7 @@ to verify the frozen source, results, and figures. Rendering hashes can change
 with the Matplotlib or font-stack version; the JSON and CSV files are the
 machine-readable scientific outputs.
 
-The versioned package is
+The public predecessor is
 [`v1.6.0`](https://github.com/castronuovo/projected-geometric-closure/releases/tag/v1.6.0).
 It adds the second-order allowance and complete 19-output workflow coverage.
 Earlier tags, including
