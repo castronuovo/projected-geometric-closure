@@ -58,6 +58,60 @@ class OutputCoverageTests(unittest.TestCase):
         with self.assertRaises(AssertionError):
             verifier.compare_bounded_joint_history(reference, modified)
 
+    def joint_outputs(self):
+        source = Path(verifier.__file__).parent / 'bounded_joint_history_results.json'
+        return json.loads(source.read_text()), json.loads(source.read_text())
+
+    def test_equivalent_joint_history_witness_is_accepted(self):
+        import numpy as np
+        from bounded_joint_history import restrictions
+        reference, modified = self.joint_outputs()
+        case = modified['cases'][0]
+        fit = case['H8']
+        fit['coefficients'][0] += 1e-10
+        prediction, states = verifier._joint_history_prediction(tuple(fit['coefficients']))
+        fit.update(restrictions(np.asarray(fit['coefficients'])))
+        fit['prediction'], fit['states'] = prediction, states
+        residual = [p-t for p, t in zip(prediction, case['target'])]
+        fit['max_joint_residual'] = max(map(abs, residual))
+        fit['max_power_residual'] = max(abs(residual[i]) for i in (0, 1, 4, 5))
+        fit['max_growthrate_residual'] = max(abs(residual[i]) for i in (2, 3, 6, 7))
+        verifier.compare_bounded_joint_history(reference, modified)
+
+    def test_inconsistent_joint_coefficients_are_rejected(self):
+        import numpy as np
+        from bounded_joint_history import restrictions
+        reference, modified = self.joint_outputs()
+        fit = modified['cases'][0]['H8']
+        fit['coefficients'][0] += 1e-5
+        fit.update(restrictions(np.asarray(fit['coefficients'])))
+        with self.assertRaisesRegex(AssertionError, 'forward_prediction'):
+            verifier.compare_bounded_joint_history(reference, modified)
+
+    def test_joint_residual_must_match_recorded_snapshots(self):
+        reference, modified = self.joint_outputs()
+        modified['cases'][0]['H8']['max_joint_residual'] += 1e-8
+        with self.assertRaisesRegex(AssertionError, 'max_joint_residual'):
+            verifier.compare_bounded_joint_history(reference, modified)
+
+    def test_joint_tied_family_is_preserved(self):
+        reference, modified = self.joint_outputs()
+        modified['cases'][0]['H2']['coefficients'][0] += 1e-7
+        with self.assertRaisesRegex(AssertionError, 'tied coefficients'):
+            verifier.compare_bounded_joint_history(reference, modified)
+
+    def test_nonfinite_joint_coefficient_is_rejected(self):
+        reference, modified = self.joint_outputs()
+        modified['cases'][0]['H8']['coefficients'][0] = float('nan')
+        with self.assertRaisesRegex(AssertionError, 'coefficients invalid'):
+            verifier.compare_bounded_joint_history(reference, modified)
+
+    def test_joint_contract_retains_strict_tolerance(self):
+        reference, modified = self.joint_outputs()
+        modified['contract']['Omega_m0'] += 1e-8
+        with self.assertRaisesRegex(AssertionError, 'contract.Omega_m0'):
+            verifier.compare_bounded_joint_history(reference, modified)
+
     def test_changed_inverse_residue_is_rejected(self):
         source = Path(verifier.__file__).parent / 'gapped_residue_inverse_diagnostic_results.json'
         reference = json.loads(source.read_text())

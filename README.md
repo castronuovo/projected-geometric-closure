@@ -55,6 +55,14 @@ amplitude and a logarithmic-slope bound. Its JSON records full-precision
 coefficients, eight endpoint observables, attained residuals, admissibility
 and independent Radau residual checks. Preserve the frozen JSON before running.
 
+The verifier checks each recorded coefficient vector by replaying the declared
+forward model, checking its amplitude/slope restrictions and recomputing the
+residuals from its snapshots. Optimizer coefficients and their solution-specific
+envelopes may differ between platforms. Endpoint observables, states and
+attained residuals are compared with an absolute tolerance of 5e-11; the
+physical contract and structural metadata retain strict checks. This tolerance
+is below the declared 1e-10 computational fit threshold.
+
 The one-percent heavy target has an admissible eight-coefficient approximation
 with maximum absolute discrepancy 1.41e-5. No case meets the predeclared
 1e-10 computational tolerance. A nonzero optimizer residual is not a global
