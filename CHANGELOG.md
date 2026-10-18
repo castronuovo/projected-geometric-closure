@@ -15,9 +15,11 @@
 - Corrected Fig. S8's numerical-certification labels and separated rendering
   from calculation so frozen results can be reused.
 - Validate bounded-history coefficient witnesses by forward reconstruction,
-  prior checks and residual consistency, with an explicit 5e-11 absolute
-  tolerance on physical outputs rather than platform-identical optimizer
-  coefficients. Physical input and structural checks remain strict.
+  prior checks and residual consistency rather than platform-identical
+  optimizer coefficients. Fixed-history reconstruction and maximum residuals
+  retain a 5e-11 absolute tolerance; comparisons of individual fit outputs allow
+  1e-4 of the approximation error with that numerical floor. Physical input
+  and structural checks remain strict.
 - Updated usage documentation and citation metadata for version v1.7.0.
 - The 19 numerical products of the public baseline are unchanged; the release
   workflow reproduces and compares all 22 products with pinned dependencies.

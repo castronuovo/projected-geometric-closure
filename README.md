@@ -59,10 +59,13 @@ and independent Radau residual checks. Preserve the frozen JSON before running.
 The verifier checks each recorded coefficient vector by replaying the declared
 forward model, checking its amplitude/slope restrictions and recomputing the
 residuals from its snapshots. Optimizer coefficients and their solution-specific
-envelopes may differ between platforms. Endpoint observables, states and
-attained residuals are compared with an absolute tolerance of 5e-11; the
-physical contract and structural metadata retain strict checks. This tolerance
-is below the declared 1e-10 computational fit threshold.
+envelopes may differ between platforms. Fixed-history forward reconstruction
+and attained maximum residuals retain an absolute tolerance of 5e-11.
+Comparisons of individual endpoints, states and component residuals between
+separately optimized histories allow 1e-4 of their attained approximation error,
+with a 5e-11 numerical floor. This is a portability criterion, not an integration
+error bound or an exact-fit claim; the 1e-10 computational fit threshold is
+unchanged. The physical contract and structural metadata retain strict checks.
 
 The one-percent heavy target has an admissible eight-coefficient approximation
 with maximum absolute discrepancy 1.41e-5. No case meets the predeclared

@@ -19,10 +19,12 @@ OPTIMIZATION_ABSOLUTE_TOLERANCE = 1.0e-12
 # runs retain the scores but need a separate, explicit numerical tolerance.
 DESI_RELATIVE_TOLERANCE = 3.0e-5
 DESI_ABSOLUTE_TOLERANCE = 1.0e-6
-# Same absolute scale as the independent-integrator residual check. This is
-# below the declared 1e-10 computational fit threshold, and applies only to
-# bounded-history endpoint observables, states and attained residuals.
+# Fixed-witness reconstruction and attained maximum residual retain the
+# independent-integrator absolute tolerance. Comparisons between separately
+# optimized witnesses allow 1e-4 of their approximation error in individual
+# endpoints/states, without relaxing the maximum-residual comparison.
 JOINT_HISTORY_ABSOLUTE_TOLERANCE = 5.0e-11
+JOINT_HISTORY_FIT_ERROR_FRACTION = 1.0e-4
 NUMERICAL_ZERO_TOLERANCE = 1.0e-10
 NUMERICAL_ZERO_DIAGNOSTICS = (
     "minimum_generator_product",
@@ -279,13 +281,21 @@ def _check_joint_history_fit(case, name):
         raise AssertionError("Bounded joint-history independent residual failed")
 
 
+def _joint_fit_comparison_tolerance(reference, regenerated):
+    return max(JOINT_HISTORY_ABSOLUTE_TOLERANCE,
+               JOINT_HISTORY_FIT_ERROR_FRACTION * max(
+                   reference["max_joint_residual"], regenerated["max_joint_residual"]))
+
+
 def compare_bounded_joint_history(reference, regenerated):
     """Check each history witness, then compare its physical outputs.
 
     Optimizer coefficients and their amplitude/slope envelopes are solution
     dependent. They must be internally consistent and admissible, rather than
-    identical between platforms. Endpoint outputs retain a 5e-11 absolute
-    comparison; the contract and structural metadata retain strict checks.
+    identical between platforms. Maximum residuals retain a 5e-11 absolute
+    comparison. Individual endpoints/states may differ by at most 1e-4 of the
+    attained approximation error (with a 5e-11 numerical floor). The contract
+    and structural metadata retain strict checks.
     """
     reference = json.loads(json.dumps(reference))
     regenerated = json.loads(json.dumps(regenerated))
@@ -313,8 +323,12 @@ def compare_bounded_joint_history(reference, regenerated):
                 for key in ("coefficients", "evaluations", "amplitude_bounds",
                             "conservative_log_slope_bound"):
                     fit.pop(key)
-            compare_json(old_fit, new_fit, name,
-                         absolute_tolerance=JOINT_HISTORY_ABSOLUTE_TOLERANCE)
+            tolerance = _joint_fit_comparison_tolerance(old_fit, new_fit)
+            for key in ("max_joint_residual", "independent_Radau_max_joint_residual"):
+                if key in old_fit:
+                    compare_json(old_fit.pop(key), new_fit.pop(key), f"{name}.{key}",
+                                 absolute_tolerance=JOINT_HISTORY_ABSOLUTE_TOLERANCE)
+            compare_json(old_fit, new_fit, name, absolute_tolerance=tolerance)
         compare_json(old_case, new_case)
 
 

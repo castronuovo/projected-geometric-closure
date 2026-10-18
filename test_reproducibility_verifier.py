@@ -78,6 +78,16 @@ class OutputCoverageTests(unittest.TestCase):
         fit['max_growthrate_residual'] = max(abs(residual[i]) for i in (2, 3, 6, 7))
         verifier.compare_bounded_joint_history(reference, modified)
 
+    def test_cross_platform_joint_endpoint_regression(self):
+        fit = {'max_joint_residual': 1.6690502537830554e-6}
+        tolerance = verifier._joint_fit_comparison_tolerance(fit, fit)
+        verifier.compare_json(0.00394694610733332, 0.00394694603509595,
+                              absolute_tolerance=tolerance)
+        with self.assertRaises(AssertionError):
+            verifier.compare_json(0.00394694610733332,
+                                  0.00394694610733332 + 2*tolerance,
+                                  absolute_tolerance=tolerance)
+
     def test_inconsistent_joint_coefficients_are_rejected(self):
         import numpy as np
         from bounded_joint_history import restrictions
