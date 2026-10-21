@@ -1,0 +1,59 @@
+{
+  "status": "defect-corrected LP iterations; numerical, not rigorous",
+  "rows": [
+    {
+      "mass_ratio": 0.95,
+      "M": 800,
+      "history": [
+        {
+          "it": 0,
+          "LP": 0.00013465122359508118,
+          "nonlinear": 0.00013653858860962487
+        },
+        {
+          "it": 1,
+          "LP_defect_corrected": 0.0001352774066451481,
+          "nonlinear": 0.00013527805747348687
+        },
+        {
+          "it": 2,
+          "LP_defect_corrected": 0.00013527569214620073,
+          "nonlinear": 0.00013527582994621312
+        },
+        {
+          "it": 3,
+          "LP_defect_corrected": 0.00013527570472801438,
+          "nonlinear": 0.00013527570482252393
+        }
+      ],
+      "b_nodes": null
+    },
+    {
+      "mass_ratio": 1.1,
+      "M": 800,
+      "history": [
+        {
+          "it": 0,
+          "LP": 0.0002829084703925208,
+          "nonlinear": 0.000286371406207353
+        },
+        {
+          "it": 1,
+          "LP_defect_corrected": 0.00028418687857758874,
+          "nonlinear": 0.00028418799125429217
+        },
+        {
+          "it": 2,
+          "LP_defect_corrected": 0.0002841843765846367,
+          "nonlinear": 0.0002841846342545029
+        },
+        {
+          "it": 3,
+          "LP_defect_corrected": 0.00028418439826795306,
+          "nonlinear": 0.00028418439841670917
+        }
+      ],
+      "b_nodes": null
+    }
+  ]
+}

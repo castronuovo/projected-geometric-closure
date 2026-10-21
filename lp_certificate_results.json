@@ -1,0 +1,81 @@
+{
+  "status": "first-order LP lower bound within linear model; second-order remainder not rigorously bounded; floating point",
+  "M": 400,
+  "rows": [
+    {
+      "note": "first-order vs nonlinear target",
+      "max_abs_target": 0.015333815999426736,
+      "max_second_order_gap": 9.013135723356241e-05
+    },
+    {
+      "mass_ratio": 0.9,
+      "LP_lower_bound_first_order": 0.0003240497323099445,
+      "nonlinear_residual_at_LP_optimum": 0.0003281512259782904,
+      "first_order_unfit": 0.0007413303084741526,
+      "b_range": [
+        0.011981243689623937,
+        0.028074527743442358
+      ]
+    },
+    {
+      "mass_ratio": 0.95,
+      "LP_lower_bound_first_order": 0.00013472094574107607,
+      "nonlinear_residual_at_LP_optimum": 0.00013660837855145047,
+      "first_order_unfit": 0.00035373026893022186,
+      "b_range": [
+        0.012942486874045917,
+        0.027671594510800247
+      ]
+    },
+    {
+      "mass_ratio": 0.98,
+      "LP_lower_bound_first_order": 4.5420851005214826e-05,
+      "nonlinear_residual_at_LP_optimum": 4.599206895972152e-05,
+      "first_order_unfit": 0.000137642778400387,
+      "b_range": [
+        0.013616978947703756,
+        0.027465903054924457
+      ]
+    },
+    {
+      "mass_ratio": 1.05,
+      "LP_lower_bound_first_order": 0.00012375575866370886,
+      "nonlinear_residual_at_LP_optimum": 0.00012530927754150767,
+      "first_order_unfit": 0.0003231182369634114,
+      "b_range": [
+        0.013952669530658041,
+        0.029329322583530607
+      ]
+    },
+    {
+      "mass_ratio": 1.1,
+      "LP_lower_bound_first_order": 0.0002829942340379178,
+      "nonlinear_residual_at_LP_optimum": 0.000286458533958589,
+      "first_order_unfit": 0.000618592690561688,
+      "b_range": [
+        0.013742659284573395,
+        0.031090624994124925
+      ]
+    },
+    {
+      "mass_ratio": 1.2,
+      "LP_lower_bound_first_order": 0.0005865018734560969,
+      "nonlinear_residual_at_LP_optimum": 0.0005933763403562775,
+      "first_order_unfit": 0.0011371046542457703,
+      "b_range": [
+        0.010385651357681543,
+        0.03347839759778884
+      ]
+    },
+    {
+      "mass_ratio": 1.5,
+      "LP_lower_bound_first_order": 0.0013260356592935515,
+      "nonlinear_residual_at_LP_optimum": 0.0013414760061263298,
+      "first_order_unfit": 0.0025364887444549074,
+      "b_range": [
+        0.010680164892893508,
+        0.0399372808538349
+      ]
+    }
+  ]
+}

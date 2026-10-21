@@ -1,0 +1,83 @@
+{
+  "status": "target m0=0.15 heavy_fraction=0.01; analytic lower-bound formula evaluated numerically; no validated numerical enclosure; class |b-0.02|<=0.005,|b-prime|<=0.05",
+  "M": 800,
+  "eta": 0.005,
+  "Lb": 0.05,
+  "rows": [
+    {
+      "mass_ratio": 0.99,
+      "LP_box": 2.94589391995027e-05,
+      "LP_dual_lower": 2.9458939199473237e-05,
+      "LP_duality_gap": 2.946319403729358e-17,
+      "remainder": 1.1209465947384977e-05,
+      "interp_allowance": 3.352350704392407e-05,
+      "estimated_lower_bound": 0.0,
+      "nonlinear_residual_at_box_LP_optimum": 2.9497196129435466e-05,
+      "J_min": 0.0,
+      "sigma": [
+        0.0006236622193196652,
+        0.0019158479430986153
+      ]
+    },
+    {
+      "mass_ratio": 1.0,
+      "LP_box": 6.7366044532823135e-06,
+      "LP_dual_lower": 6.736604453275404e-06,
+      "LP_duality_gap": 6.909247750753328e-18,
+      "remainder": 1.1133887405690236e-05,
+      "interp_allowance": 3.341017126420538e-05,
+      "estimated_lower_bound": 0.0,
+      "nonlinear_residual_at_box_LP_optimum": 6.782708105612656e-06,
+      "J_min": 0.0,
+      "sigma": [
+        0.0006151270031552657,
+        0.0019094351150115464
+      ]
+    },
+    {
+      "mass_ratio": 1.01,
+      "LP_box": 1.2953028126562604e-05,
+      "LP_dual_lower": 1.2953028126549215e-05,
+      "LP_duality_gap": 1.3388202764301471e-17,
+      "remainder": 1.1058474504485586e-05,
+      "interp_allowance": 3.329670101295804e-05,
+      "estimated_lower_bound": 0.0,
+      "nonlinear_residual_at_box_LP_optimum": 1.2966885010859408e-05,
+      "J_min": 0.0,
+      "sigma": [
+        0.000606745073853082,
+        0.0019030142311418574
+      ]
+    },
+    {
+      "mass_ratio": 1.05,
+      "LP_box": 0.00011578403403919437,
+      "LP_dual_lower": 0.00011578403403907843,
+      "LP_duality_gap": 1.1594186982016863e-16,
+      "remainder": 1.0758671749669275e-05,
+      "interp_allowance": 3.284174123876398e-05,
+      "estimated_lower_bound": 7.218362105064518e-05,
+      "nonlinear_residual_at_box_LP_optimum": 0.00011580865155042409,
+      "J_min": 0.0,
+      "sigma": [
+        0.0005746892059430781,
+        0.0018772651627455195
+      ]
+    },
+    {
+      "mass_ratio": 1.1,
+      "LP_box": 0.00028294784720647254,
+      "LP_dual_lower": 0.0002829478472061892,
+      "LP_duality_gap": 2.833562377790866e-16,
+      "remainder": 1.0388740876566698e-05,
+      "interp_allowance": 3.2271558147195085e-05,
+      "estimated_lower_bound": 0.0002402875481824274,
+      "nonlinear_residual_at_box_LP_optimum": 0.00028302313979833293,
+      "J_min": 0.0,
+      "sigma": [
+        0.0005377140507970753,
+        0.0018449847385742363
+      ]
+    }
+  ]
+}

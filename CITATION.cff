@@ -1,6 +1,7 @@
 cff-version: 1.2.0
-message: "Please cite version v1.7.0 of this software and the associated manuscript."
-version: "1.7.0"
+message: "Please cite version v1.8.0 of this software and the associated manuscript."
+version: "1.8.0"
+date-released: 2026-10-21
 title: "Reproducibility Package for Spectral Identifiability of a Protected Cosmological Response: Conditional Exclusion and the Limits of a Two-Time Shadow"
 type: software
 authors:

@@ -26,21 +26,62 @@ class OutputCoverageTests(unittest.TestCase):
             return output.getvalue()
 
     def test_complete_set_includes_causal_amplitude_output(self):
-        self.assertEqual(len(verifier.FILES), 22)
-        self.assertIn('All 22 scientific outputs', self.invoke())
+        self.assertEqual(len(verifier.FILES), 32)
+        self.assertIn('All 32 scientific outputs', self.invoke())
+
+    def test_initial_v18_set_is_reported_as_partial(self):
+        self.assertIn('27 of 32', self.invoke(verifier.V18_EXTRA_FILES_NOT_IN_INITIAL_CI))
+
+    def test_missing_one_extra_output_is_rejected(self):
+        with self.assertRaises(FileNotFoundError):
+            self.invoke({'rigorous_lp_certificate_M800_m025.json'})
+
+    def test_changed_extra_target_bound_is_rejected(self):
+        source = Path(verifier.__file__).parent / 'rigorous_lp_certificate_M800_m025.json'
+        reference = json.loads(source.read_text())
+        modified = json.loads(source.read_text())
+        modified['rows'][0]['estimated_lower_bound'] += 1e-6
+        with self.assertRaises(AssertionError):
+            verifier.compare_linear_program_output(reference, modified)
+
+    def test_v17_set_is_reported_as_partial(self):
+        self.assertIn('22 of 32', self.invoke(verifier.V18_FILES_NOT_IN_V17_CI))
 
     def test_v16_set_is_reported_as_partial(self):
-        self.assertIn('19 of 22', self.invoke(verifier.V17_FILES_NOT_IN_V16_CI))
+        self.assertIn('19 of 32', self.invoke(
+            verifier.V18_FILES_NOT_IN_V17_CI | verifier.V17_FILES_NOT_IN_V16_CI))
 
     def test_previous_complete_set_is_reported_as_partial(self):
-        message = self.invoke(verifier.V17_FILES_NOT_IN_V16_CI | verifier.V16_FILES_NOT_IN_V15_CI)
-        self.assertIn('17 of 22', message)
+        message = self.invoke(verifier.V18_FILES_NOT_IN_V17_CI
+                              | verifier.V17_FILES_NOT_IN_V16_CI | verifier.V16_FILES_NOT_IN_V15_CI)
+        self.assertIn('17 of 32', message)
         self.assertIn('partial coverage', message)
-        self.assertNotIn('All 22', message)
+        self.assertNotIn('All 32', message)
 
     def test_legacy_set_is_reported_as_partial(self):
-        missing = verifier.V17_FILES_NOT_IN_V16_CI | verifier.V16_FILES_NOT_IN_V15_CI | verifier.V15_FILES_NOT_IN_LEGACY_CI
-        self.assertIn('14 of 22', self.invoke(missing))
+        missing = (verifier.V18_FILES_NOT_IN_V17_CI | verifier.V17_FILES_NOT_IN_V16_CI
+                   | verifier.V16_FILES_NOT_IN_V15_CI | verifier.V15_FILES_NOT_IN_LEGACY_CI)
+        self.assertIn('14 of 32', self.invoke(missing))
+
+    def test_workflow_preserves_exact_covered_output_set(self):
+        import re
+        workflow = (Path(verifier.__file__).parent / '.github/workflows/reproducibility.yml').read_text()
+        block = workflow.split('- name: Preserve frozen scientific outputs',1)[1].split('- name:',1)[0]
+        preserved = set(re.findall(r'([A-Za-z0-9_]+\.(?:json|csv))',block))
+        self.assertEqual(preserved,set(verifier.FILES))
+
+    def test_changed_linear_program_bound_is_rejected(self):
+        source = Path(verifier.__file__).parent / 'lp_certificate_results.json'
+        reference = json.loads(source.read_text())
+        modified = json.loads(source.read_text())
+        modified['rows'][1]['LP_lower_bound_first_order'] *= 1.001
+        with self.assertRaises(AssertionError):
+            verifier.compare_linear_program_output(reference, modified)
+
+    def test_linear_program_history_vector_is_not_compared(self):
+        reference = {'rows': [{'LP': 1.0e-4, 'b_nodes': [0.02, 0.03]}]}
+        modified = {'rows': [{'LP': 1.0e-4, 'b_nodes': [0.021, 0.029]}]}
+        verifier.compare_linear_program_output(reference, modified)
 
     def test_changed_joint_history_prior_is_rejected(self):
         source = Path(verifier.__file__).parent / 'bounded_joint_history_results.json'

@@ -1,20 +1,24 @@
 # Spectral identifiability of a protected cosmological response
 
-**Current package version: v1.7.0.**
+**Version v1.8.0 — 21 October 2026.**
 
-This repository contains the versioned source and reproducibility data for v1.7.0.
+This directory contains the source and reproducibility data for v1.8.0.
 
 Reproducibility materials for *Spectral Identifiability of a Protected
 Cosmological Response: Conditional Exclusion and the Limits of a Two-Time Shadow*.
 
-Published predecessor: <https://github.com/castronuovo/projected-geometric-closure/releases/tag/v1.6.0>
+Published predecessor: <https://github.com/castronuovo/projected-geometric-closure/releases/tag/v1.7.0>
 
-Relative to v1.6.0, version v1.7.0 includes a four-power
+Relative to v1.7.0, version v1.8.0 adds the linear-program discrepancy bounds, the constant-amplitude comparator and the amplitude-law comparison described in the last section; v1.7.0 had added a four-power
 counterfit with an independent Radau integration check.
-The 19 inherited numerical products remain unchanged; three Python-generated
-products bring the Python comparison set to 22. The release workflow reproduces
-and compares all 22 products under the pinned environment; stored reference
-files retain their original runtime provenance.
+The 22 numerical products of v1.7.0 remain unchanged. Ten added numerical
+products bring the verifier set to 32: ten CSV and 22 JSON files. The workflow
+preserves, regenerates and compares every one, including both
+mesh sizes and all stored target variants. Run status is available in
+[GitHub Actions](https://github.com/castronuovo/projected-geometric-closure/actions/workflows/reproducibility.yml).
+The nine updated history outputs have already
+been reproduced locally with the pinned direct dependencies, and the retained
+products preserve their original provenance.
 
 The auxiliary causal-amplitude theorem is analytic: causal triangular blocks and classical
 Cauchy nonsingularity give full rank, then the ordinary inverse-function
@@ -75,8 +79,10 @@ priors are phenomenological inputs, not a derived two-time law; the ideal
 snapshots are not survey likelihoods. This bounded calculation used NumPy
 2.0.2/SciPy 1.13.1; the release workflow independently checks the pinned
 NumPy 1.26.4 environment.
-The separate Wolfram checks and internal review records stay outside this
-public Python package. These materials are included in version v1.7.0.
+The separate current Wolfram scripts and internal review records stay outside
+this public Python package. The retained `symbolic_verification_checks.json` is
+a historical auxiliary transcript from the published predecessor; it does not
+verify the new bounds or the generic-baseline extension. The corresponding Python materials were introduced in v1.7.0 and are retained here.
 
 ## Scientific architecture
 
@@ -88,8 +94,14 @@ up to unitary equivalence; finite projected data do not establish that exact
 identification. A local causal obstruction shows that unrestricted common
 positive temporal amplitudes at one fixed mass can saturate finite power data.
 The joint ideal growth/velocity result applies to a pure-growing flat
-matter-plus-vacuum reference, and conditional tests retain their stated
-physical history contract. The complete parent dynamics, quantum consistency,
+matter-plus-vacuum reference. Its generic positive-baseline extension reuses
+analytic dependence of the linear ODE: a fixed temporal-family Jacobian has
+a nontrivial entire determinant, so its positive zeros are locally finite.
+Away from that possible exceptional set, the endpoint image is locally open.
+This does not certify a prescribed numerical amplitude or a uniform reachable
+radius. Conditional tests retain their stated physical history contract.
+The analytic argument is given in the manuscript and supplement; no Python
+benchmark is presented as a proof of that extension. The complete parent dynamics, quantum consistency,
 and joint spectrum--matter matching are outside the scope of this manuscript.
 
 Finite-data exclusion is conditional on the declared response class, rival
@@ -252,7 +264,7 @@ and agrees with the previous NumPy 2.0.2 values within the declared numerical
 tolerances. The new CSV/JSON comparisons use the existing optimization
 allowance (`1e-7` relative, `1e-12` absolute) because the dual witness uses
 non-negative least squares. Structural metadata, counts and booleans must
-match exactly. The updated workflow is configured to verify all 22 outputs;
+match exactly. The updated workflow is configured to verify all 32 outputs;
 it has not been run for this local revision. The image
 is regenerated but is not included in the numerical-output comparison.
 
@@ -280,9 +292,11 @@ python3 -m pip install -r requirements.txt
 
 ## Reproduction
 
-Run from this directory:
+Preserve the frozen outputs before executing any producer. Run from this directory:
 
 ```bash
+export OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1
+python3 -c "from pathlib import Path; import shutil; import verify_reproducibility as v; p=Path('frozen-outputs'); p.mkdir(exist_ok=False); [shutil.copy2(n,p/n) for n in v.FILES]"
 python3 benchmark_projected_spectral.py
 python3 spectral_shadow_duality.py
 python3 finite_residue_5d_benchmark.py
@@ -293,9 +307,21 @@ python3 causal_growth_transport.py
 python3 causal_transport_support_audit.py
 python3 causal_transport_free_amplitude.py
 python3 causal_second_order_allowance.py
+python3 bounded_joint_history.py
 python3 causal_amplitude_reachability.py
+python3 constant_amplitude_comparator.py
+python3 lp_certificate.py
+python3 lp_defect_corrected.py 400
+python3 lp_defect_corrected.py 800
+python3 rigorous_lp_certificate.py 400
+python3 rigorous_lp_certificate.py 800
+python3 rigorous_lp_certificate.py 800 _m010 0.10 0 0.95,1.05,1.1
+python3 rigorous_lp_certificate.py 800 _m025 0.25 0 0.95,1.05,1.1
+python3 rigorous_lp_certificate.py 800 _two 0.15 0.01 0.99,1,1.01,1.05,1.1
+python3 parent_law_comparison.py 800 "" 0.15 0 0.9,0.95,0.98,1.02,1.05,1.1
 python3 desi_dr1_tangent_test.py
 python3 rival_map_calibration_check.py
+python3 verify_reproducibility.py frozen-outputs
 ```
 
 The DESI command downloads official released likelihood containers into a
@@ -313,26 +339,24 @@ Actions caches these inputs, but the script checks their hashes on every run.
 Run `python3 -m unittest -v test_verified_download` to exercise connection,
 interruption, cache, and integrity failures without downloading survey data.
 
-To compare a complete regenerated run with the frozen release outputs, copy
-the frozen CSV and JSON files to a separate directory before running the twelve
-benchmark commands above, then run
-`python3 verify_reproducibility.py FROZEN_DIRECTORY`. The synthetic contract
-check is self-validating and has no frozen scientific output.
-The verifier covers all ten CSV and twelve JSON Python-generated scientific outputs, including
-the DESI diagnostic. Its DESI-specific tolerances are `3e-5` relative and
-`1e-6` absolute because profiled nuisance optima vary slightly across
-independent numerical runs; structural metadata and integer counts still
-match exactly. This comparison does not validate the linear Kaiser forward
-model against survey mocks or turn the DESI score into a constraint.
-The published v1.5.0 workflow regenerates the 14 inherited outputs. When
-given that exact legacy reference set, the verifier reports the partial scope
-explicitly. The v1.6.0 workflow preserves and compares all 19
-frozen outputs, including the spectral-duality and DESI diagnostics, and runs
-the self-validating rival-map contract check. The v1.7.0 workflow adds the three diagnostic outputs and is configured for
-all 22 scientific outputs. A complete replay also includes the rival-map
-contract check. DESI replay needs network
-access to the official input containers. A successful run of the extended configuration is required to establish
-full CI coverage; a historical 14-output badge is not sufficient.
+The verifier covers ten CSV and 22 JSON scientific outputs. It compares the
+regenerated files against the separately preserved frozen directory; copying
+outputs only after recomputation would invalidate that check. The self-validating
+rival-map contract check has no frozen output. Figure files are distributed
+but are not compared pixel by pixel. Figure 0 is a supplied static schematic,
+not a numerical product.
+
+DESI-specific tolerances are `3e-5` relative and `1e-6` absolute because
+profiled nuisance optima vary slightly across independent runs; structural
+metadata and integer counts still match exactly. These comparisons do not
+validate the linear Kaiser forward model against survey mocks or turn its
+score into an observational constraint.
+
+Historical reference sets of 14, 17, 19 and 22 outputs remain recognized as
+partial coverage. The initial 27-output v1.8.0 candidate is also reported as
+partial; a complete current reference set contains 32 outputs. Arbitrary
+missing-file combinations fail. Full remote workflow execution, including
+verified external DESI inputs, remains separate from local subset verification.
 
 Optional thresholds can be supplied explicitly, for example:
 
@@ -575,3 +599,26 @@ remain unchanged.
   [Creative Commons Attribution 4.0 International](LICENSE-CONTENT).
 
 Copyright (c) 2026 Vitantonio Castronuovo.
+
+## Additions in v1.8.0: bounded-history discrepancies
+
+These scripts belong to the v1.8.0 package. `verify_reproducibility.py` checks all ten added numerical outputs (both mesh sizes and every stored target variant are included). Preserve the frozen JSON before running.
+`constant_amplitude_comparator.py` fits the three stored two-mass targets with a
+constant-amplitude one-mass model (fixed and freely shifted mass) on the same
+contract as `bounded_joint_history.py`. `lp_certificate.py` and
+`lp_defect_corrected.py [400|800]` compute the minimal joint discrepancy to a
+single-mass target over piecewise-linear positive histories with
+0.01<=b<=0.04 and |d ln b/dN|<=2: a linear program whose optimum is a lower
+bound within the first-order response model, followed by iteration of the
+second-order defect. Values are floating-point, ideal-snapshot estimates for one
+contract; the second-order remainder is not rigorously bounded.
+
+`rigorous_lp_certificate.py [400|800]` evaluates, for the band |b-0.02|<=0.005, |b'|<=0.05, the linear-program value, an explicit second-order remainder bound and an interpolation allowance, and reports a numerical estimate of the analytic lower-bound construction, not a validated numerical enclosure. It uses a box-corrected dual objective, epoch-specific derivative-kernel norms and the uniform interpolation allowance L_b*DeltaN/2. The output key is `estimated_lower_bound`; negative constructions are replaced by the trivial zero bound.
+
+Optional arguments: `rigorous_lp_certificate.py M TAG m0 heavy_fraction r1,r2,...` select the target true mass, the stored two-mass target (heavy_fraction>0) and the trial-mass ratios; the stored extra results are `rigorous_lp_certificate_M800_{m010,m025,two}.json`.
+
+`parent_law_comparison.py M` compares, for a foundation-form amplitude law b_t=0.04*Omega_m(a) and a single true mass, a one-parameter same-law competitor, a constant amplitude and a free history in a band (numerically evaluated lower-bound construction and attained value). The class is b=b_t+delta_b with |delta_b|<=0.005 and |delta_b'|<=0.05: the derivative bound applies to the perturbation, not b. The forward model uses the smooth b_t plus the linear interpolant of delta_b. The law is not derived from the two-time parent. Neither a ratio of discrepancies nor interpolation between trial masses certifies a continuous mass-resolution interval.
+
+The nonlinear forward integrations for the piecewise-linear comparisons restart
+at every interpolation knot. This controls integration across slope changes;
+it does not constitute interval arithmetic or certify global nonlinear optimality.

@@ -11,6 +11,9 @@ jobs:
   benchmark:
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    env:
+      OPENBLAS_NUM_THREADS: "1"
+      OMP_NUM_THREADS: "1"
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-python@v6
@@ -22,7 +25,7 @@ jobs:
       - name: Verify committed release files
         run: sha256sum -c SHA256SUMS
       - name: Test input integrity and output coverage
-        run: python -m unittest -v test_verified_download test_reproducibility_verifier
+        run: python -m unittest -v test_verified_download test_reproducibility_verifier test_lp_bounds
       - name: Cache verified DESI inputs
         uses: actions/cache@v5
         with:
@@ -54,6 +57,16 @@ jobs:
             causal_amplitude_reachability_results.json \
             gapped_residue_inverse_diagnostic_results.json \
             bounded_joint_history_results.json \
+            constant_amplitude_comparator_results.json \
+            lp_certificate_results.json \
+            lp_defect_corrected_M400.json \
+            rigorous_lp_certificate_M400.json \
+            parent_law_comparison_M800.json \
+            lp_defect_corrected_M800.json \
+            rigorous_lp_certificate_M800.json \
+            rigorous_lp_certificate_M800_m010.json \
+            rigorous_lp_certificate_M800_m025.json \
+            rigorous_lp_certificate_M800_two.json \
             "$RUNNER_TEMP/frozen-outputs/"
       - name: Recompute benchmarks and restricted DESI diagnostic
         run: |
@@ -69,6 +82,16 @@ jobs:
           python causal_second_order_allowance.py
           python bounded_joint_history.py
           python causal_amplitude_reachability.py
+          python constant_amplitude_comparator.py
+          python lp_certificate.py
+          python lp_defect_corrected.py 400
+          python lp_defect_corrected.py 800
+          python rigorous_lp_certificate.py 400
+          python rigorous_lp_certificate.py 800
+          python rigorous_lp_certificate.py 800 _m010 0.10 0 0.95,1.05,1.1
+          python rigorous_lp_certificate.py 800 _m025 0.25 0 0.95,1.05,1.1
+          python rigorous_lp_certificate.py 800 _two 0.15 0.01 0.99,1,1.01,1.05,1.1
+          python parent_law_comparison.py 800 "" 0.15 0 0.9,0.95,0.98,1.02,1.05,1.1
           python desi_dr1_tangent_test.py
           python rival_map_calibration_check.py
       - name: Validate citation metadata against the CFF schema

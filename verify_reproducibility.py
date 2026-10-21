@@ -58,6 +58,16 @@ JSON_FILES = (
     "causal_amplitude_reachability_results.json",
     "gapped_residue_inverse_diagnostic_results.json",
     "bounded_joint_history_results.json",
+    "constant_amplitude_comparator_results.json",
+    "lp_certificate_results.json",
+    "lp_defect_corrected_M400.json",
+    "rigorous_lp_certificate_M400.json",
+    "parent_law_comparison_M800.json",
+    "lp_defect_corrected_M800.json",
+    "rigorous_lp_certificate_M800.json",
+    "rigorous_lp_certificate_M800_m010.json",
+    "rigorous_lp_certificate_M800_m025.json",
+    "rigorous_lp_certificate_M800_two.json",
 )
 FILES = CSV_FILES + JSON_FILES
 V15_FILES_NOT_IN_LEGACY_CI = frozenset((
@@ -72,6 +82,29 @@ V16_FILES_NOT_IN_V15_CI = frozenset((
 V17_FILES_NOT_IN_V16_CI = frozenset(("causal_amplitude_reachability_results.json",
                                                  "gapped_residue_inverse_diagnostic_results.json",
                                                  "bounded_joint_history_results.json"))
+V18_FILES_NOT_IN_V17_CI = frozenset((
+    "constant_amplitude_comparator_results.json",
+    "lp_certificate_results.json",
+    "lp_defect_corrected_M400.json",
+    "rigorous_lp_certificate_M400.json",
+    "parent_law_comparison_M800.json",
+    "lp_defect_corrected_M800.json",
+    "rigorous_lp_certificate_M800.json",
+    "rigorous_lp_certificate_M800_m010.json",
+    "rigorous_lp_certificate_M800_m025.json",
+    "rigorous_lp_certificate_M800_two.json",
+))
+V18_EXTRA_FILES_NOT_IN_INITIAL_CI = frozenset((
+    "lp_defect_corrected_M800.json",
+    "rigorous_lp_certificate_M800.json",
+    "rigorous_lp_certificate_M800_m010.json",
+    "rigorous_lp_certificate_M800_m025.json",
+    "rigorous_lp_certificate_M800_two.json",
+))
+# Linear-program outputs: scalar results only. The optimal history vector and
+# its range are not unique at degenerate optima and are not compared.
+V18_IGNORED_KEYS = frozenset(("b_nodes", "b_range"))
+V18_ABSOLUTE_TOLERANCE = 1.0e-9
 PLATFORM_SENSITIVE_JSON_FILES = (
     "causal_transport_support_results.json",
     "causal_transport_free_amplitude_results.json",
@@ -218,6 +251,21 @@ def compare_causal_amplitude(reference, regenerated):
     compare_json(reference, regenerated, optimization=True)
 
 
+def _strip_keys(value, ignored):
+    if isinstance(value, dict):
+        return {k: _strip_keys(v, ignored) for k, v in value.items() if k not in ignored}
+    if isinstance(value, list):
+        return [_strip_keys(v, ignored) for v in value]
+    return value
+
+
+def compare_linear_program_output(reference, regenerated):
+    """Compare scalar bounds and residuals of the v1.8.0 linear-program outputs."""
+    compare_json(_strip_keys(reference, V18_IGNORED_KEYS),
+                 _strip_keys(regenerated, V18_IGNORED_KEYS),
+                 optimization=True, absolute_tolerance=V18_ABSOLUTE_TOLERANCE)
+
+
 def compare_inverse_diagnostic(reference, regenerated):
     """Compare inverse bounds; report hashes of regenerated forward inputs."""
     reference, regenerated = dict(reference), dict(regenerated)
@@ -339,9 +387,12 @@ def main() -> None:
     regenerated_directory = Path(__file__).resolve().parent
     missing = {name for name in FILES if not (reference_directory / name).is_file()}
     if missing and missing not in (
-        V17_FILES_NOT_IN_V16_CI,
-        V17_FILES_NOT_IN_V16_CI | V16_FILES_NOT_IN_V15_CI,
-        V17_FILES_NOT_IN_V16_CI | V16_FILES_NOT_IN_V15_CI | V15_FILES_NOT_IN_LEGACY_CI,
+        V18_EXTRA_FILES_NOT_IN_INITIAL_CI,
+        V18_FILES_NOT_IN_V17_CI,
+        V18_FILES_NOT_IN_V17_CI | V17_FILES_NOT_IN_V16_CI,
+        V18_FILES_NOT_IN_V17_CI | V17_FILES_NOT_IN_V16_CI | V16_FILES_NOT_IN_V15_CI,
+        V18_FILES_NOT_IN_V17_CI | V17_FILES_NOT_IN_V16_CI | V16_FILES_NOT_IN_V15_CI
+        | V15_FILES_NOT_IN_LEGACY_CI,
     ):
         raise FileNotFoundError(
             "Incomplete frozen-output set: " + ", ".join(sorted(missing))
@@ -366,6 +417,9 @@ def main() -> None:
             continue
         if json_filename == "bounded_joint_history_results.json":
             compare_bounded_joint_history(reference_json, regenerated_json)
+            continue
+        if json_filename in V18_FILES_NOT_IN_V17_CI:
+            compare_linear_program_output(reference_json, regenerated_json)
             continue
         if json_filename == "gapped_residue_inverse_diagnostic_results.json":
             compare_inverse_diagnostic(reference_json, regenerated_json)

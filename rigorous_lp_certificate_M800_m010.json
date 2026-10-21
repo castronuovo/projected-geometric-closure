@@ -1,0 +1,53 @@
+{
+  "status": "target m0=0.1 heavy_fraction=0.0; analytic lower-bound formula evaluated numerically; no validated numerical enclosure; class |b-0.02|<=0.005,|b-prime|<=0.05",
+  "M": 800,
+  "eta": 0.005,
+  "Lb": 0.05,
+  "rows": [
+    {
+      "mass_ratio": 0.95,
+      "LP_box": 0.00016162446468373468,
+      "LP_dual_lower": 0.00016162446468357279,
+      "LP_duality_gap": 1.6189848940639795e-16,
+      "remainder": 1.3907012150054572e-05,
+      "interp_allowance": 3.734509052429633e-05,
+      "estimated_lower_bound": 0.00011037236200922188,
+      "nonlinear_residual_at_box_LP_optimum": 0.0001617570811169866,
+      "J_min": 0.0,
+      "sigma": [
+        0.0010580860546761611,
+        0.0021318205513800505
+      ]
+    },
+    {
+      "mass_ratio": 1.05,
+      "LP_box": 0.0001549517579940631,
+      "LP_dual_lower": 0.00015495175799390778,
+      "LP_duality_gap": 1.553119612085485e-16,
+      "remainder": 1.3417577356839611e-05,
+      "interp_allowance": 3.6681150169782916e-05,
+      "estimated_lower_bound": 0.00010485303046728526,
+      "nonlinear_residual_at_box_LP_optimum": 0.00015498857092423064,
+      "J_min": 0.0,
+      "sigma": [
+        0.0009538221162518547,
+        0.002094335401944077
+      ]
+    },
+    {
+      "mass_ratio": 1.1,
+      "LP_box": 0.00035566374553243775,
+      "LP_dual_lower": 0.0003556637455320818,
+      "LP_duality_gap": 3.559435732269911e-16,
+      "remainder": 1.3167761640873613e-05,
+      "interp_allowance": 3.633761239046935e-05,
+      "estimated_lower_bound": 0.00030615837150073887,
+      "nonlinear_residual_at_box_LP_optimum": 0.00035571014163849127,
+      "J_min": 0.0,
+      "sigma": [
+        0.0009062618347055738,
+        0.0020749336550199065
+      ]
+    }
+  ]
+}

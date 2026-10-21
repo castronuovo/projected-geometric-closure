@@ -1,5 +1,41 @@
 # Changelog
 
+## 1.8.0 — 21 October 2026
+
+- Complete stored-output coverage: the verifier and workflow now include all
+  32 scientific products, including five previously distributed but unchecked
+  mesh/target variants; a 27-output reference set is explicitly partial.
+- Update all reproduction commands and document the analytic generic
+  positive-baseline extension with its possible isolated exceptions. No
+  numerical script is asserted to prove that analytic result.
+- Supply the manuscript's static conceptual diagram as `figs/fig0_conceptual_flow.png`.
+- Nonlinear integrations restart at every piecewise-linear history knot,
+  preventing adaptive steps from skipping slope changes; verifier tolerances
+  are retained.
+- Review corrections (21 October): uniform weighted interpolation allowance,
+  epoch-specific derivative-kernel bounds, box-corrected LP dual objective,
+  explicit parent-law perturbation class and matching forward interpolation.
+  Outputs are numerical estimates, not validated exclusion certificates;
+  mass-interval extrapolations are withdrawn.
+- Added a constant-amplitude one-mass comparator for the bounded joint-history
+  contract (`constant_amplitude_comparator.py`) and a first-order linear-program
+  lower bound for the mass resolution under positive, slope-bounded temporal
+  histories, with a second-order defect-corrected iteration
+  (`lp_certificate.py`, `lp_defect_corrected.py`) and their stored results.
+- Added `rigorous_lp_certificate.py`: an explicit Neumann-series remainder bound
+  and interpolation allowance that turn the linear-program value into a lower
+  bound for the nonlinear problem in an amplitude band, up to floating-point
+  evaluation of its constants. Stored results at both mesh sizes, further true masses and the
+  two-mass target are included in the workflow and verifier.
+- Added `parent_law_comparison.py`, comparing a one-parameter amplitude law with
+  a free history in a band. The law is foundation-motivated and is not derived
+  from the two-time parent.
+- Extended `verify_reproducibility.py`, its regression tests and the workflow to
+  32 outputs; the history vectors of the linear programs are not compared because
+  optimal vectors need not be unique.
+- The 22 products of v1.7.0 are unchanged. Updated usage documentation and
+  citation metadata for version v1.8.0.
+
 ## 1.7.0 — 18 October 2026
 
 - Added a bounded joint growth/velocity diagnostic: three fixed two-mass

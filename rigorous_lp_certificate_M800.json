@@ -1,0 +1,128 @@
+{
+  "status": "target m0=0.15 heavy_fraction=0.0; analytic lower-bound formula evaluated numerically; no validated numerical enclosure; class |b-0.02|<=0.005,|b-prime|<=0.05",
+  "M": 800,
+  "eta": 0.005,
+  "Lb": 0.05,
+  "rows": [
+    {
+      "mass_ratio": 0.9,
+      "LP_box": 0.000331979416195926,
+      "LP_dual_lower": 0.00033197941619559414,
+      "LP_duality_gap": 3.318742849978129e-16,
+      "remainder": 1.1895351401153129e-05,
+      "interp_allowance": 3.45351173982592e-05,
+      "estimated_lower_bound": 0.00028554894739618185,
+      "nonlinear_residual_at_box_LP_optimum": 0.00033201657293391307,
+      "J_min": 0.0,
+      "sigma": [
+        0.000707916862651632,
+        0.0019730676497127625
+      ]
+    },
+    {
+      "mass_ratio": 0.95,
+      "LP_box": 0.000136486204685645,
+      "LP_dual_lower": 0.00013648620468550846,
+      "LP_duality_gap": 1.3652815857023715e-16,
+      "remainder": 1.1513229119548319e-05,
+      "interp_allowance": 3.397522616637824e-05,
+      "estimated_lower_bound": 9.099774939958191e-05,
+      "nonlinear_residual_at_box_LP_optimum": 0.00013656830773456363,
+      "J_min": 0.0,
+      "sigma": [
+        0.0006593999040469867,
+        0.0019414029287940988
+      ]
+    },
+    {
+      "mass_ratio": 0.98,
+      "LP_box": 4.5316270475791786e-05,
+      "LP_dual_lower": 4.531627047574623e-05,
+      "LP_duality_gap": 4.555682003512529e-17,
+      "remainder": 1.128519998830492e-05,
+      "interp_allowance": 3.363669459055725e-05,
+      "estimated_lower_bound": 3.943758968840574e-07,
+      "nonlinear_residual_at_box_LP_optimum": 4.536853732517443e-05,
+      "J_min": 0.0,
+      "sigma": [
+        0.0006323538756488313,
+        0.0019222519382554946
+      ]
+    },
+    {
+      "mass_ratio": 1.02,
+      "LP_box": 4.4094368289545563e-05,
+      "LP_dual_lower": 4.409436828950137e-05,
+      "LP_duality_gap": 4.4194791055940374e-17,
+      "remainder": 1.0983237085891619e-05,
+      "interp_allowance": 3.318310978497021e-05,
+      "estimated_lower_bound": 0.0,
+      "nonlinear_residual_at_box_LP_optimum": 4.4110209081472604e-05,
+      "J_min": 0.0,
+      "sigma": [
+        0.0005985133368063096,
+        0.0018965860537549853
+      ]
+    },
+    {
+      "mass_ratio": 1.05,
+      "LP_box": 0.00012904174581335965,
+      "LP_dual_lower": 0.00012904174581323074,
+      "LP_duality_gap": 1.2891163830852648e-16,
+      "remainder": 1.0758671749669275e-05,
+      "interp_allowance": 3.284174123876398e-05,
+      "estimated_lower_bound": 8.544133282479749e-05,
+      "nonlinear_residual_at_box_LP_optimum": 0.00012906711669489904,
+      "J_min": 0.0,
+      "sigma": [
+        0.0005746892059430781,
+        0.0018772651627455195
+      ]
+    },
+    {
+      "mass_ratio": 1.1,
+      "LP_box": 0.0002976832756052701,
+      "LP_dual_lower": 0.00029768327560497214,
+      "LP_duality_gap": 2.979387569990166e-16,
+      "remainder": 1.0388740876566698e-05,
+      "interp_allowance": 3.2271558147195085e-05,
+      "estimated_lower_bound": 0.00025502297658121036,
+      "nonlinear_residual_at_box_LP_optimum": 0.0002977989244101753,
+      "J_min": 0.0,
+      "sigma": [
+        0.0005377140507970753,
+        0.0018449847385742363
+      ]
+    },
+    {
+      "mass_ratio": 1.2,
+      "LP_box": 0.0006181963158208094,
+      "LP_dual_lower": 0.0006181963158201918,
+      "LP_duality_gap": 6.175615574477433e-16,
+      "remainder": 9.668516668536931e-06,
+      "interp_allowance": 3.113163777639816e-05,
+      "estimated_lower_bound": 0.0005773961613752567,
+      "nonlinear_residual_at_box_LP_optimum": 0.0006191203801726441,
+      "J_min": 0.0,
+      "sigma": [
+        0.0004728353577944588,
+        0.0017804153978718605
+      ]
+    },
+    {
+      "mass_ratio": 1.5,
+      "LP_box": 0.001600281318014722,
+      "LP_dual_lower": 0.001600281318013122,
+      "LP_duality_gap": 1.6000655661541074e-15,
+      "remainder": 7.707960640863914e-06,
+      "interp_allowance": 2.7793667697411365e-05,
+      "estimated_lower_bound": 0.0015647796896748466,
+      "nonlinear_residual_at_box_LP_optimum": 0.0016001180807532212,
+      "J_min": 0.0,
+      "sigma": [
+        0.00033239265457952685,
+        0.0015910828239948313
+      ]
+    }
+  ]
+}
