@@ -603,6 +603,12 @@ Copyright (c) 2026 Vitantonio Castronuovo.
 ## Additions in v1.8.0: bounded-history discrepancies
 
 These scripts belong to the v1.8.0 package. `verify_reproducibility.py` checks all ten added numerical outputs (both mesh sizes and every stored target variant are included). Preserve the frozen JSON before running.
+
+For the constant-amplitude comparator, the fitted and inherited history
+residuals retain the existing 5e-11 absolute comparison tolerance. The recorded
+ratio of two small residuals is checked against its own numerator and positive
+denominator in each run. Its components are compared across runs; the ratio is
+not treated as an independent observable with the same absolute tolerance.
 `constant_amplitude_comparator.py` fits the three stored two-mass targets with a
 constant-amplitude one-mass model (fixed and freely shifted mass) on the same
 contract as `bounded_joint_history.py`. `lp_certificate.py` and

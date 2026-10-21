@@ -83,6 +83,39 @@ class OutputCoverageTests(unittest.TestCase):
         modified = {'rows': [{'LP': 1.0e-4, 'b_nodes': [0.021, 0.029]}]}
         verifier.compare_linear_program_output(reference, modified)
 
+    def constant_outputs(self):
+        source = Path(verifier.__file__).parent / 'constant_amplitude_comparator_results.json'
+        return json.loads(source.read_text()), json.loads(source.read_text())
+
+    def test_constant_ratio_cross_platform_regression(self):
+        reference, modified = self.constant_outputs()
+        case = modified['cases'][0]
+        case['H8_frozen'] = 8.831386960270193e-08
+        case['const_amp_fixed_mass_unbounded']['max_joint_residual'] = 1.6088758614252185e-07
+        case['ratio_const_fixed_over_H8'] = 1.8217703161044543
+        verifier.compare_constant_amplitude(reference, modified)
+
+    def test_inconsistent_constant_ratio_is_rejected(self):
+        reference, modified = self.constant_outputs()
+        modified['cases'][0]['ratio_const_fixed_over_H8'] += 1e-7
+        with self.assertRaisesRegex(AssertionError, 'ratio is inconsistent'):
+            verifier.compare_constant_amplitude(reference, modified)
+
+    def test_changed_constant_residual_is_rejected(self):
+        reference, modified = self.constant_outputs()
+        case = modified['cases'][0]
+        case['const_amp_fixed_mass_unbounded']['max_joint_residual'] += 1e-10
+        case['ratio_const_fixed_over_H8'] = (case['const_amp_fixed_mass_unbounded']
+                                            ['max_joint_residual'] / case['H8_frozen'])
+        with self.assertRaisesRegex(AssertionError, 'max_joint_residual'):
+            verifier.compare_constant_amplitude(reference, modified)
+
+    def test_nonfinite_constant_ratio_denominator_is_rejected(self):
+        reference, modified = self.constant_outputs()
+        modified['cases'][0]['H8_frozen'] = float('nan')
+        with self.assertRaisesRegex(AssertionError, 'ratio is inconsistent'):
+            verifier.compare_constant_amplitude(reference, modified)
+
     def test_changed_joint_history_prior_is_rejected(self):
         source = Path(verifier.__file__).parent / 'bounded_joint_history_results.json'
         reference = json.loads(source.read_text())

@@ -266,6 +266,37 @@ def compare_linear_program_output(reference, regenerated):
                  optimization=True, absolute_tolerance=V18_ABSOLUTE_TOLERANCE)
 
 
+def compare_constant_amplitude(reference, regenerated):
+    """Check residuals and each derived ratio without dividing their tolerances."""
+    ratio_key = "ratio_const_fixed_over_H8"
+    fit_names = ("const_amp_fixed_mass_unbounded", "const_amp_fixed_mass_prior_box",
+                 "const_amp_free_mass_unbounded")
+    for output in (reference, regenerated):
+        for case in output["cases"]:
+            numerator = case[fit_names[0]]["max_joint_residual"]
+            denominator = case["H8_frozen"]
+            ratio = case[ratio_key]
+            if not (math.isfinite(numerator) and numerator >= 0
+                    and math.isfinite(denominator) and denominator > 0
+                    and math.isfinite(ratio) and close(numerator / denominator, ratio)):
+                raise AssertionError("Constant-amplitude residual ratio is inconsistent")
+    # Ratios of small optimizer residuals amplify harmless denominator changes.
+    # Compare every component with the existing residual tolerance, and check
+    # the ratio identity independently in each run instead of treating it as
+    # an additional independent observable with the same absolute tolerance.
+    compare_linear_program_output(_strip_keys(reference, {ratio_key}),
+                                  _strip_keys(regenerated, {ratio_key}))
+    for old, new in zip(reference["cases"], regenerated["cases"]):
+        for key in ("H8_frozen", "H2_frozen"):
+            compare_json(old[key], new[key], f"constant_amplitude.{key}",
+                         absolute_tolerance=JOINT_HISTORY_ABSOLUTE_TOLERANCE)
+        for fit in fit_names:
+            for key in ("max_joint_residual", "max_power_residual",
+                        "max_growthrate_residual"):
+                compare_json(old[fit][key], new[fit][key], f"constant_amplitude.{fit}.{key}",
+                             absolute_tolerance=JOINT_HISTORY_ABSOLUTE_TOLERANCE)
+
+
 def compare_inverse_diagnostic(reference, regenerated):
     """Compare inverse bounds; report hashes of regenerated forward inputs."""
     reference, regenerated = dict(reference), dict(regenerated)
@@ -417,6 +448,9 @@ def main() -> None:
             continue
         if json_filename == "bounded_joint_history_results.json":
             compare_bounded_joint_history(reference_json, regenerated_json)
+            continue
+        if json_filename == "constant_amplitude_comparator_results.json":
+            compare_constant_amplitude(reference_json, regenerated_json)
             continue
         if json_filename in V18_FILES_NOT_IN_V17_CI:
             compare_linear_program_output(reference_json, regenerated_json)

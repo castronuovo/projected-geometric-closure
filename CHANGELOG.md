@@ -2,6 +2,9 @@
 
 ## 1.8.0 — 21 October 2026
 
+- Check the constant-amplitude residual ratio against its components in each
+  run; compare the components across platforms with the existing 5e-11
+  residual tolerance. A small denominator is not assigned a new ratio tolerance.
 - Complete stored-output coverage: the verifier and workflow now include all
   32 scientific products, including five previously distributed but unchecked
   mesh/target variants; a 27-output reference set is explicitly partial.
